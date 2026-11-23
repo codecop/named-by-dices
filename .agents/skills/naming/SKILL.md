@@ -36,3 +36,10 @@ The three dices contain the words
 * "Builder", "Business", "Data", "Executor", "Object", "Processor"
 * "Abstract", "Arolla", "Common", "Default", "Dummy", "I"
 * "Factory", "Helper", "Impl", "Manager", "Service", "Utils"
+
+## Clarifications (learned the hard way)
+
+* In Java, `default` and `abstract` are keywords and cannot be used as identifiers — only the other 16 words are usable (camelCase: `builder`, `business`, `data`, `executor`, `object`, `processor`, `arolla`, `common`, `dummy`, `i`, `factory`, `helper`, `impl`, `manager`, `service`, `utils`).
+* Uniqueness is required **per context only** (e.g. all method names within a class, all variables within a method) — different classes/methods may reuse the same names. There are not 30 independent variables; the pool is small, so roll again on collision within the current context and keep methods short with few locals.
+* Only **test method names** are exempt from the dice constraint. Test *locals* are accepted by project decision, but all other self-declared identifiers (variables, parameters, fields, methods, classes, packages, folders) must be dice names — `main` (the Java entry point) is also exempt.
+* After coding, scan the sources for self-declared identifiers outside the vocabulary (e.g. `border`, `key`, `x`, `y`, catch variables like `e`) and rename them — see `01_game_of_life/docs/Constraint Variations.md` for a real violations report.
