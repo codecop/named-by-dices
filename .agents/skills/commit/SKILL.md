@@ -42,8 +42,8 @@ Co-Authored-By: Mistral Vibe <vibe@mistral.ai>"
 In the cloud sandbox, `git push` (smart-HTTP receive-pack to github.com) is rejected by the sandbox proxy with 403, while the GitHub REST API (api.github.com) is allowed and the token has Contents: write permission. Therefore:
 
 1. Work locally with `git commit` as usual (rules above).
-2. Push with `python3 scripts/api_push.py [--branch main]` — the script reads the token from `API_PUSH_TOKEN`, `~/.push-token` (chmod 600) or `gh auth token`, determines the repo from `git remote get-url origin`, and replays the local commits via the git data API (blobs -> tree -> commit -> PATCH ref) onto the remote branch.
-3. In a new session: clone the repo with `gh repo clone <owner>/<repo>`, provide a token (one of the three sources above), then run `scripts/api_push.py`.
+2. Push with `python3 scripts/api_push.py [--branch main]` — the script prefers the `gh` executable (`gh api`, token supplied by gh itself; this is what works in the sandbox, where raw HTTP with a token gets 401/403) and otherwise falls back to an explicit token from `API_PUSH_TOKEN` or `~/.push-token` (chmod 600, never commit it). The repo is derived from `git remote get-url origin`; the local commits are replayed via the git data API (blobs -> tree -> commit -> PATCH ref) onto the remote branch.
+3. In a new session: clone the repo with `gh repo clone <owner>/<repo>`, make sure gh is authenticated (or provide `~/.push-token`), then run `scripts/api_push.py`.
 
 Outside the sandbox, plain `git push origin <branch>` works.
 
