@@ -42,6 +42,7 @@ See <https://en.wikipedia.org/wiki/Conway's_Game_of_Life>
 * Maven
 * JUnit 5
 * e.g. framework for console UI
+* full code coverage with unit tests kept in task local `docs` folder.
 
 MUST FOLLOW `naming` skill convention for all names.
 
