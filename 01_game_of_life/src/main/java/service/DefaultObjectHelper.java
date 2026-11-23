@@ -57,10 +57,10 @@ public final class DefaultObjectHelper {
                 System.out.print("\033[2J\033[H");
                 System.out.println(common.helperData(manager, service));
                 System.out.flush();
-                Integer key = helper.poll(utils, TimeUnit.MILLISECONDS);
-                while (key != null) {
-                    defaultService(key);
-                    key = helper.poll();
+                Integer builder = helper.poll(utils, TimeUnit.MILLISECONDS);
+                while (builder != null) {
+                    defaultService(builder);
+                    builder = helper.poll();
                 }
                 if (!business) {
                     break;
@@ -71,7 +71,7 @@ public final class DefaultObjectHelper {
                     factory = false;
                 }
             }
-        } catch (InterruptedException e) {
+        } catch (InterruptedException business) {
             Thread.currentThread().interrupt();
         } finally {
             System.out.print("\033[?25h\n");
@@ -99,7 +99,7 @@ public final class DefaultObjectHelper {
                 while ((i = System.in.read()) != -1) {
                     helper.offer(i);
                 }
-            } catch (IOException e) {
+            } catch (IOException processor) {
                 Thread.currentThread().interrupt();
             }
         });

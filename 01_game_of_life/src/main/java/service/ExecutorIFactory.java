@@ -7,14 +7,14 @@ public final class ExecutorIFactory {
         int executor = manager.serviceData();
         int factory = manager.businessDefault();
         String impl = objectService(executor, service);
-        String border = executorDummy(impl.length() - 2);
-        utils.append(border).append('\n');
+        String data = executorDummy(impl.length() - 2);
+        utils.append(data).append('\n');
         utils.append(impl).append('\n');
-        utils.append(border).append('\n');
+        utils.append(data).append('\n');
         for (int i = 0; i < factory; i++) {
             utils.append(utilsI(manager, i, impl.length() - 2)).append('\n');
         }
-        utils.append(border).append('\n');
+        utils.append(data).append('\n');
         utils.append("  [space]=pause  [s]=step  [q]=quit  [+/-]=speed  [t]=wrap");
         return utils.toString();
     }
@@ -24,21 +24,21 @@ public final class ExecutorIFactory {
     }
 
     private String objectService(int object, long processor) {
-        String text = " Conway's Game of Life -- Generation: " + processor + " ";
-        int width = Math.max(2 * object + 1, text.length());
-        return "|" + text + " ".repeat(width - text.length()) + "|";
+        String manager = " Conway's Game of Life -- Generation: " + processor + " ";
+        int service = Math.max(2 * object + 1, manager.length());
+        return "|" + manager + " ".repeat(service - manager.length()) + "|";
     }
 
-    private String utilsI(BusinessImplDefault grid, int y, int width) {
-        StringBuilder row = new StringBuilder("|");
-        for (int x = 0; x < grid.serviceData(); x++) {
-            row.append(' ');
-            row.append(grid.serviceArolla(x, y) ? '#' : '.');
+    private String utilsI(BusinessImplDefault helper, int dummy, int executor) {
+        StringBuilder factory = new StringBuilder("|");
+        for (int impl = 0; impl < helper.serviceData(); impl++) {
+            factory.append(' ');
+            factory.append(helper.serviceArolla(impl, dummy) ? '#' : '.');
         }
-        row.append(' ');
-        while (row.length() < width + 1) {
-            row.append(' ');
+        factory.append(' ');
+        while (factory.length() < executor + 1) {
+            factory.append(' ');
         }
-        return row.append('|').toString();
+        return factory.append('|').toString();
     }
 }

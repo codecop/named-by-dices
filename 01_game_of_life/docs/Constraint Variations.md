@@ -5,6 +5,8 @@ Testmethodennamen sind laut Naming-Skill ausgenommen. `main` (Java-Einstiegspunk
 
 ## src\main\java\service
 
+**Resolved:** all identifiers below were renamed to dice names from the vocabulary in the `naming` skill.
+
 | Datei | Identifier |
 | ------- | ----------- |
 | `BuilderIImpl.java` | `grid`, `cell`, `offsets`, `x`, `y`, `j` |
@@ -12,6 +14,8 @@ Testmethodennamen sind laut Naming-Skill ausgenommen. `main` (Java-Einstiegspunk
 | `ExecutorIFactory.java` | `border`, `row`, `text`, `width`, `grid`, `x`, `y` |
 
 ## src\test\java\service
+
+**Accepted:** test method names are exempt from the dice constraint, and test locals are fine per project decision — no changes.
 
 | Datei | Identifier |
 | ------- | ----------- |

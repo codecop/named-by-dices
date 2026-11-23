@@ -17,15 +17,15 @@ public final class BuilderIImpl {
 
     public static void iBusiness(BusinessImplDefault manager, Random data) {
         for (int i = 0; i < manager.businessDefault(); i++) {
-            for (int j = 0; j < manager.serviceData(); j++) {
-                manager.utilsData(j, i, data.nextBoolean());
+            for (int factory = 0; factory < manager.serviceData(); factory++) {
+                manager.utilsData(factory, i, data.nextBoolean());
             }
         }
     }
 
-    private static void serviceExecutor(BusinessImplDefault grid, int x, int y, int[][] offsets) {
-        for (int[] cell : offsets) {
-            grid.utilsData(x + cell[0], y + cell[1], true);
+    private static void serviceExecutor(BusinessImplDefault helper, int manager, int service, int[][] utils) {
+        for (int[] data : utils) {
+            helper.utilsData(manager + data[0], service + data[1], true);
         }
     }
 }
