@@ -49,3 +49,9 @@ In the cloud sandbox, `git push` (smart-HTTP receive-pack to github.com) is reje
 Outside the sandbox, plain `git push origin <branch>` works.
 
 The token is never written into the repo or printed.
+
+## Notes (cloud machines only)
+
+1. Do not waste time on `git push` variants: a fresh `gh repo clone` does not help; `git push` with `GH_TOKEN` or with a PAT supplied via `-c credential.helper=...` is rejected by the sandbox proxy with 403 (receive-pack is blocked regardless of the credential); raw `Authorization: token/Bearer` against the git smart-HTTP endpoints via python returns 401. In the sandbox, only the REST API via raw urllib with a PAT can write.
+2. `scripts/api_push.py` creates new commit SHAs server-side, so `git status` shows "ahead/behind" even when the content is identical. Check sync by **tree SHA** only (`git rev-parse HEAD^{tree}` vs. `GET /repos/<repo>/git/commits/<main-sha>` -> `.tree.sha`), never by commit SHA. The script itself finds the base commit by comparing trees for the same reason.
+3. Pulling upstream after API pushes: `git pull` would report conflicts everywhere because local and remote commit SHAs diverged (merge-base is the original commit); `git merge origin/main` resolves cleanly because the replayed commits have identical trees. Never use `git reset --hard`/`git rebase` to "fix" the divergence (see rules above).
