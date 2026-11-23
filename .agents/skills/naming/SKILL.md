@@ -28,3 +28,11 @@ Will create camelCase names by default.
 | `-h`, `--help` | Show help message |
 | `-p`, `--pascal` | Use PascalCase for all names |
 | `-s`, `--snake` | Use snake_case for all names, where appropriate by language naming convention |
+
+## Complete Vocabulary
+
+The three dices contain the words
+
+* "Builder", "Business", "Data", "Executor", "Object", "Processor"
+* "Abstract", "Arolla", "Common", "Default", "Dummy", "I"
+* "Factory", "Helper", "Impl", "Manager", "Service", "Utils"
