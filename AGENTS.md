@@ -12,8 +12,3 @@ Use British spellings throughout, for example:
 - `colour` (not `color`)
 - `centre` (not `center`)
 - `organise` (not `organize`)
-
-## Skills
-
-Project skills live in `.agents/skills/<name>/SKILL.md` and are written in
-English as well (`naming`, `unit-testing`, `commit`, `capture-demo`).
