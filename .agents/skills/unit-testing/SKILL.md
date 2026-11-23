@@ -8,9 +8,15 @@ description: >
 
 ## Test Method Naming
 
-* Name each test according a user specific use case
+* Name each test according to a user-specific use case
 * Use the pattern `<state of the system>_<act>_<expected outcome>`
 * Example: `emptyList_addItem_itemIsAdded`
+* In this repo, test method names are the **exception** to the Dice Namer constraint - they keep descriptive names
+
+## Test Structure
+
+* Follow the Arrange-Act-Assert (AAA) pattern: set up state, invoke the behaviour, verify the outcome
+* Keep each phase clearly separated, e.g. by a blank line
 
 ## Verification
 
@@ -36,7 +42,7 @@ description: >
 ## Mocking Dependencies
 
 * Use dependency injection pattern with function pointers for mockable dependencies
-* Create mock implementations with hardcoded, predictable return values:
+* Create mock implementations with hardcoded, predictable return values (example in Zig):
   ```zig
   fn mock_get_time() LocalWindowsTime {
       return .{ .wYear = 2024, .wMonth = 1, .wDay = 15, ... };
