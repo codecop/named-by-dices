@@ -1,52 +1,29 @@
 ---
 name: capture-demo
-description: Load this skill when creating screenshots or an animated GIF/video of a console app (e.g. 01_game_of_life) running in the cloud sandbox, including the full working setup for the sandbox.
+description: Load this skill when creating screenshots or an animated GIF/video of a console app (e.g. 01_game_of_life) running in the cloud sandbox.
 ---
 
 # Capture Demo (Screenshots / Video)
 
-Erzeugt Screenshots und ein animiertes GIF ("Video") von einer laufenden
- Konsolen-App (hier: `01_game_of_life`), damit man schnell visuell verifizieren
- kann, dass alles läuft. Ergebnis landet in `01_game_of_life/docs/`
- (`frame-generation-N.png`, `demo.gif`).
+Creates screenshots and an animated GIF ("video") of a running console app (here: `01_game_of_life`) so you can quickly verify visually that everything works. Output goes to `01_game_of_life/docs/` (`frame-generation-N.png`, `demo.gif`).
 
-## Working Solution im Cloud-Sandbox (was laden, wie man es bekommt)
+## Cloud sandbox prerequisites (short form)
 
-- Kein root, kein apt. `curl`/`wget` sind per Policy blockiert.
-  Funktionieren: `git`/`gh` (github.com, api.github.com) und `python3` (urllib
-  für beliebige HTTPS-Downloads, z. B. Maven Central, dlcdn.apache.org,
-  api.adoptium.net).
-- **JDK 21** holen (nicht installiert):
-  `python3` + urllib: `https://api.adoptium.net/v3/binary/latest/21/ga/linux/x64/jdk/hotspot/normal/eclipse`
-  als tar.gz nach `~/tools/`, entpacken, `export JAVA_HOME=~/tools/jdk-21* `.
-- **Maven** holen: Versionsliste unter `https://dlcdn.apache.org/maven/maven-3/`,
-  dann `.../maven-3/<ver>/binaries/apache-maven-<ver>-bin.tar.gz` nach `~/tools/`
-  entpacken, `PATH=$JAVA_HOME/bin:~/tools/apache-maven-*/bin:$PATH`.
-  Maven Central ist aus Java heraus erreichbar — `mvn` lädt Dependencies normal.
-- **Pillow** für die Bild-Erzeugung: `pip3 install pillow` (pip funktioniert).
-  Font: `ImageFont.load_default(size=22)` genügt, keine System-Font nötig.
-- **Push**: siehe `commit`-Skill — `git push` ist im Sandbox blockiert (403),
-  stattdessen `python3 scripts/api_push.py`.
+The toolchain setup is generic cloud-instance setup, not demo-specific. In short: no root, `curl`/`wget` blocked; `git`/`gh`/`python3` work. Fetch JDK 21 (Adoptium tarball) and Maven (`dlcdn.apache.org`) with python3 urllib into `~/tools/` and put them on `PATH`; `pip3 install pillow` for rendering (`ImageFont.load_default(size=22)` needs no system font); push via `scripts/api_push.py` (see the `commit` skill), because `git push` is blocked (403).
 
-## Vorgehen
+## Procedure
 
-1. Bauen: `cd 01_game_of_life && mvn -B package` (Tests laufen mit, grün).
-2. App headless laufen lassen und Frames aufnehmen (verzögertes `q` als Quit-Key):
+1. Build: `cd 01_game_of_life && mvn -B package` (tests run along, must be green).
+2. Run the app headless and capture frames (delayed `q` as quit key):
    ```
    (sleep 1.6; printf 'q') | java -jar target/IServiceProcessor-1.0-SNAPSHOT.jar \
        --cols 30 --rows 12 --delay 120 > /tmp/run.raw 2>&1
    ```
-3. Frames parsen: Roh-Output ist durch ANSI-Clear `\x1b[2J\x1b[H` getrennt,
-   restliche Escapes (`\x1b[?25l`, `\x1b[?25h`) strippen. Jeder Frame ist ein
-   Textblock (Border, Titel mit Generation, Grid-Zeilen, Footer).
-4. Mit Pillow rendern (914x474, dunkler Hintergrund, `#` grün, `.` grau,
-   Titel blau): erste/mittlere/letzte Frames als `frame-generation-N.png`,
-   alle Frames (300 ms/Frame, loop) als `demo.gif` nach `01_game_of_life/docs/`.
-5. Verifizieren: GIF-Frame per `Image.seek(n)` extrahieren und bildlich prüfen
-   (Generation im Titel, Glider/Blinker sichtbar, Border/Footer sauber).
-6. Committen und pushen (siehe `commit`-Skill, Footer nicht vergessen).
+3. Parse frames: the raw output is separated by ANSI clear `\x1b[2J\x1b[H`; strip remaining escapes (`\x1b[?25l`, `\x1b[?25h`). Each frame is a text block (border, title with generation, grid rows, footer).
+4. Render with Pillow (914x474, dark background, `#` green, `.` gray, title blue): first/middle/last frames as `frame-generation-N.png`, all frames (300 ms/frame, loop) as `demo.gif` into `01_game_of_life/docs/`.
+5. Verify: extract a GIF frame via `Image.seek(n)` and inspect it visually (generation in the title, glider/blinker visible, border/footer aligned).
+6. Commit and push (see the `commit` skill, do not forget the footer).
 
 ## Naming
 
-Die `naming`-Skill gilt für Code-Namen; Doku-/Bild-Dateien (`docs/demo.gif`,
-Skill-Dateien) folgen der üblichen Verzeichnisstruktur.
+The `naming` skill applies to code names; doc/image files (`docs/demo.gif`, skill files) follow the usual directory structure.
