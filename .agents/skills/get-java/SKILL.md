@@ -10,7 +10,7 @@ description: Load this skill whenever a Java 21 JDK and/or Maven are needed on a
 - No root, no `apt`, no `sudo` ("no new privileges" flag).
 - `curl` and `wget` are blocked by sandbox policy ("Network requests via curl are not allowed").
 - What works: `git`/`gh` (github.com, api.github.com) and `python3` with `urllib` for arbitrary HTTPS downloads (Maven Central, dlcdn.apache.org, api.adoptium.net all reachable).
-- Shell state does **not** persist between commands — export `JAVA_HOME`/`PATH` in the same command that uses them.
+- Shell state does **not** persist between commands - export `JAVA_HOME`/`PATH` in the same command that uses them.
 
 ## Download helper (python3 urllib)
 
@@ -37,7 +37,7 @@ def dl(url, out):
    mvn -version
    ```
 
-   Maven Central (repo.maven.apache.org) is reachable from Java, so `mvn` resolves plugins and dependencies normally — no extra setup.
+   Maven Central (repo.maven.apache.org) is reachable from Java, so `mvn` resolves plugins and dependencies normally - no extra setup.
 
 ## Verify a project
 
