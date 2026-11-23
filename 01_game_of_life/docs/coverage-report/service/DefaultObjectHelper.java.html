@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DefaultObjectHelper.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">IServiceProcessor</a> &gt; <a href="index.source.html" class="el_package">service</a> &gt; <span class="el_source">DefaultObjectHelper.java</span></div><h1>DefaultObjectHelper.java</h1><pre class="source lang-java linenums">package service;
+
+import java.io.IOException;
+import java.util.Random;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
+
+<span class="nc" id="L9">public final class DefaultObjectHelper {</span>
+
+    private BusinessImplDefault manager;
+    private long service;
+    private long utils;
+    private boolean executor;
+    private boolean factory;
+    private boolean business;
+<span class="nc" id="L17">    private final BlockingQueue&lt;Integer&gt; helper = new LinkedBlockingQueue&lt;&gt;();</span>
+<span class="nc" id="L18">    private final ExecutorIFactory common = new ExecutorIFactory();</span>
+
+    public static void main(String[] impl) {
+<span class="nc" id="L21">        new DefaultObjectHelper().implExecutor(impl);</span>
+<span class="nc" id="L22">    }</span>
+
+    private void implExecutor(String[] impl) {
+<span class="nc" id="L25">        int object = 40;</span>
+<span class="nc" id="L26">        int processor = 20;</span>
+<span class="nc" id="L27">        long data = 200;</span>
+<span class="nc" id="L28">        boolean arolla = false;</span>
+<span class="nc" id="L29">        boolean dummy = false;</span>
+<span class="nc bnc" id="L30" title="All 2 branches missed.">        for (int i = 0; i &lt; impl.length; i++) {</span>
+<span class="nc bnc" id="L31" title="All 6 branches missed.">            switch (impl[i]) {</span>
+<span class="nc" id="L32">                case &quot;--cols&quot; -&gt; object = Integer.parseInt(impl[++i]);</span>
+<span class="nc" id="L33">                case &quot;--rows&quot; -&gt; processor = Integer.parseInt(impl[++i]);</span>
+<span class="nc" id="L34">                case &quot;--delay&quot; -&gt; data = Long.parseLong(impl[++i]);</span>
+<span class="nc" id="L35">                case &quot;--wrap&quot; -&gt; arolla = true;</span>
+<span class="nc" id="L36">                case &quot;--random&quot; -&gt; dummy = true;</span>
+                default -&gt; {
+                }
+            }
+        }
+<span class="nc" id="L41">        manager = new BusinessImplDefault(object, processor, arolla);</span>
+<span class="nc bnc" id="L42" title="All 2 branches missed.">        if (dummy) {</span>
+<span class="nc" id="L43">            BuilderIImpl.iBusiness(manager, new Random());</span>
+        } else {
+<span class="nc" id="L45">            BuilderIImpl.dummyFactory(manager, 2, 2);</span>
+<span class="nc" id="L46">            BuilderIImpl.factoryDefault(manager, 10, 6);</span>
+        }
+<span class="nc" id="L48">        utils = data;</span>
+<span class="nc" id="L49">        service = 0;</span>
+<span class="nc" id="L50">        executor = false;</span>
+<span class="nc" id="L51">        factory = false;</span>
+<span class="nc" id="L52">        business = true;</span>
+<span class="nc" id="L53">        defaultProcessor();</span>
+<span class="nc" id="L54">        System.out.print(&quot;\033[?25l&quot;);</span>
+        try {
+<span class="nc bnc" id="L56" title="All 2 branches missed.">            while (business) {</span>
+<span class="nc" id="L57">                System.out.print(&quot;\033[2J\033[H&quot;);</span>
+<span class="nc" id="L58">                System.out.println(common.helperData(manager, service));</span>
+<span class="nc" id="L59">                System.out.flush();</span>
+<span class="nc" id="L60">                Integer key = helper.poll(utils, TimeUnit.MILLISECONDS);</span>
+<span class="nc bnc" id="L61" title="All 2 branches missed.">                while (key != null) {</span>
+<span class="nc" id="L62">                    defaultService(key);</span>
+<span class="nc" id="L63">                    key = helper.poll();</span>
+                }
+<span class="nc bnc" id="L65" title="All 2 branches missed.">                if (!business) {</span>
+<span class="nc" id="L66">                    break;</span>
+                }
+<span class="nc bnc" id="L68" title="All 4 branches missed.">                if (!executor || factory) {</span>
+<span class="nc" id="L69">                    manager = manager.businessFactory();</span>
+<span class="nc" id="L70">                    service++;</span>
+<span class="nc" id="L71">                    factory = false;</span>
+                }
+<span class="nc" id="L73">            }</span>
+<span class="nc" id="L74">        } catch (InterruptedException e) {</span>
+<span class="nc" id="L75">            Thread.currentThread().interrupt();</span>
+        } finally {
+<span class="nc" id="L77">            System.out.print(&quot;\033[?25h\n&quot;);</span>
+<span class="nc" id="L78">            System.out.flush();</span>
+        }
+<span class="nc" id="L80">    }</span>
+
+    private void defaultService(int data) {
+<span class="nc bnc" id="L83" title="All 7 branches missed.">        switch (data) {</span>
+<span class="nc bnc" id="L84" title="All 2 branches missed.">            case ' ' -&gt; executor = !executor;</span>
+<span class="nc" id="L85">            case 's', 'S' -&gt; factory = true;</span>
+<span class="nc" id="L86">            case 'q', 'Q' -&gt; business = false;</span>
+<span class="nc" id="L87">            case '+' -&gt; utils = Math.max(50, utils - 50);</span>
+<span class="nc" id="L88">            case '-' -&gt; utils = Math.min(2000, utils + 50);</span>
+<span class="nc bnc" id="L89" title="All 2 branches missed.">            case 't', 'T' -&gt; manager.objectDummy(!manager.factoryBusiness());</span>
+            default -&gt; {
+            }
+        }
+<span class="nc" id="L93">    }</span>
+
+    private void defaultProcessor() {
+<span class="nc" id="L96">        Thread object = new Thread(() -&gt; {</span>
+            try {
+                int i;
+<span class="nc bnc" id="L99" title="All 2 branches missed.">                while ((i = System.in.read()) != -1) {</span>
+<span class="nc" id="L100">                    helper.offer(i);</span>
+                }
+<span class="nc" id="L102">            } catch (IOException e) {</span>
+<span class="nc" id="L103">                Thread.currentThread().interrupt();</span>
+<span class="nc" id="L104">            }</span>
+<span class="nc" id="L105">        });</span>
+<span class="nc" id="L106">        object.setDaemon(true);</span>
+<span class="nc" id="L107">        object.start();</span>
+<span class="nc" id="L108">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
