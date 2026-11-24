@@ -46,7 +46,7 @@ jobs:
         uses: msys2/setup-msys2@v2
         with:
           msystem: mingw64
-          install: mingw-w64-x86_64-toolchain mingw-w64-x86_64-cmocka
+          install: make mingw-w64-x86_64-toolchain mingw-w64-x86_64-cmocka
       - name: Build (Makefile.win)
         shell: msys2 {0}
         run: make -f Makefile.win CMOCKA_ROOT=/mingw64 all

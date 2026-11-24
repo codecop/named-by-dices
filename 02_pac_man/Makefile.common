@@ -1,5 +1,5 @@
 # Shared parts of Makefile (POSIX) and Makefile.win (Windows/MinGW). Build files are exempt from the naming skill.
-CC ?= gcc
+CC = gcc
 CFLAGS ?= -std=c99 -Wall -Wextra -Werror -pedantic -O2 -g
 CMOCKA_ROOT ?= /usr
 
