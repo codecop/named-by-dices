@@ -40,7 +40,7 @@ test: $(TESTS)
 
 ifeq ($(OS),Windows_NT)
 $(BUILD):
-	if not exist $(BUILD) mkdir $(BUILD)
+	-mkdir $(BUILD) 2>nul
 else
 $(BUILD):
 	mkdir -p $@
