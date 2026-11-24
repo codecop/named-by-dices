@@ -24,14 +24,14 @@ static void executor_dummy_utils(void) {
     if (!isatty(STDIN_FILENO)) {
         return;
     }
-    if (tcgetattr(STDIN_FILENO, &business_factory_arolla) == 0) {
+    tcgetattr(STDIN_FILENO, &business_factory_arolla);
+    {
         struct termios dummy = business_factory_arolla;
         cfmakeraw(&dummy);
-        if (tcsetattr(STDIN_FILENO, TCSANOW, &dummy) == 0) {
-            default_business_service = 1;
-            atexit(builder_impl_dummy);
-        }
+        tcsetattr(STDIN_FILENO, TCSANOW, &dummy);
     }
+    default_business_service = 1;
+    atexit(builder_impl_dummy);
 }
 
 static int i_factory_processor(void *object) {
@@ -46,16 +46,13 @@ static int i_factory_processor(void *object) {
             return -1;
         }
         if (read(STDIN_FILENO, &utils, 1) != 1) {
-            return -1;
+            return 'q';
         }
         return utils;
     }
     {
         ssize_t common = read(STDIN_FILENO, &utils, 1);
-        if (common < 0) {
-            return -1;
-        }
-        if (common == 0) {
+        if (common <= 0) {
             return 'q';
         }
         return utils;
@@ -82,16 +79,6 @@ static void utils_default_business(void *object, int manager) {
     nanosleep(&impl, NULL);
 }
 
-static unsigned abstract_impl_executor(void *object) {
-    unsigned *utils = (unsigned *)object;
-    unsigned data = *utils;
-    data ^= data << 13;
-    data ^= data >> 17;
-    data ^= data << 5;
-    *utils = data;
-    return data;
-}
-
 int main(int data, char **common) {
     factory_arolla_object object;
     abstract_utils_object dummy;
@@ -106,18 +93,9 @@ int main(int data, char **common) {
     dummy.factory = impl_object_arolla;
     dummy.helper = utils_default_business;
     dummy.impl = data_abstract_service;
-    helper = (unsigned)time(NULL) ^ (unsigned)getpid();
-    if (helper == 0) {
-        helper = 42;
-    }
-    service = dummy_business_impl(&object, &dummy, abstract_impl_executor, &helper);
+    helper = ((unsigned)time(NULL) ^ (unsigned)getpid()) | 1u;
+    service = dummy_business_impl(&object, &dummy, executor_arolla, &helper);
     builder_impl_dummy();
-    if (service == (int)AROLLA_IMPL_BUSINESS) {
-        fputs("YOU WIN!\n", stdout);
-    } else if (service == (int)EXECUTOR_DUMMY_IMPL) {
-        fputs("GAME OVER\n", stdout);
-    } else {
-        fputs("BYE\n", stdout);
-    }
+    common_processor(service, &dummy);
     return 0;
 }

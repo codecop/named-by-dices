@@ -39,4 +39,12 @@ text = out.decode("utf-8", "replace")
 assert rc == 0, "exit code %r" % rc
 assert "PAC-MAN" in text and "SCORE" in text, "no frame rendered"
 assert "BYE" in text, "no quit message"
+
+master2, slave2 = pty.openpty()
+proc2 = subprocess.Popen([exe], stdin=slave2, stdout=slave2, stderr=slave2, close_fds=True)
+os.close(slave2)
+time.sleep(0.4)
+os.close(master2)
+rc2 = proc2.wait(timeout=8)
+assert rc2 == 0, "exit code on tty hangup %r" % rc2
 print("pty smoke ok")

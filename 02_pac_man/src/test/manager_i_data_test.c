@@ -154,6 +154,38 @@ static void step_whenNotRunning_changesNothing(void **state) {
     default_processor_factory(&object);
 }
 
+static void step_frightTimerRunsOut_ghostReturnsToChase(void **state) {
+    builder_helper_arolla object;
+    factory_arolla_object factory;
+    const char *manager[] = { "#####", "#P.G#", "#####" };
+    (void)state;
+    i_processor_helper(&object, manager, 3);
+    business_dummy_manager(&factory, &object);
+    factory.factory[0].helper = AROLLA_BUSINESS_HELPER;
+    factory.factory[0].data = 1;
+    i_utils_builder(&factory, AROLLA_IMPL_EXECUTOR, dummy, NULL);
+    i_utils_builder(&factory, AROLLA_IMPL_EXECUTOR, dummy, NULL);
+    assert_int_equal(data_arolla_factory(&factory, 0)->helper, HELPER_I_BUILDER);
+    assert_int_equal(abstract_executor_impl(&factory), BUSINESS_SERVICE_I);
+    default_processor_factory(&object);
+}
+
+static void step_frightenedWithZeroTimer_keepsFrightMode(void **state) {
+    builder_helper_arolla object;
+    factory_arolla_object factory;
+    const char *manager[] = { "#####", "#P.G#", "#####" };
+    (void)state;
+    i_processor_helper(&object, manager, 3);
+    business_dummy_manager(&factory, &object);
+    factory.factory[0].helper = AROLLA_BUSINESS_HELPER;
+    factory.factory[0].data = 0;
+    i_utils_builder(&factory, AROLLA_IMPL_EXECUTOR, dummy, NULL);
+    i_utils_builder(&factory, AROLLA_IMPL_EXECUTOR, dummy, NULL);
+    assert_int_equal(data_arolla_factory(&factory, 0)->helper, AROLLA_BUSINESS_HELPER);
+    assert_int_equal(data_arolla_factory(&factory, 0)->data, 0);
+    default_processor_factory(&object);
+}
+
 int data_helper_common(void) {
     static const struct CMUnitTest dummy[] = {
         cmocka_unit_test(newGame_initialisesStateFromMap),
@@ -164,7 +196,9 @@ int data_helper_common(void) {
         cmocka_unit_test(step_chasingGhostTouch_costsLifeAndResetsActors),
         cmocka_unit_test(step_lastLifeLost_setsStatusLost),
         cmocka_unit_test(step_allDotsEaten_setsStatusWon),
-        cmocka_unit_test(step_whenNotRunning_changesNothing)
+        cmocka_unit_test(step_whenNotRunning_changesNothing),
+        cmocka_unit_test(step_frightTimerRunsOut_ghostReturnsToChase),
+        cmocka_unit_test(step_frightenedWithZeroTimer_keepsFrightMode)
     };
     return cmocka_run_group_tests(dummy, NULL, NULL);
 }
