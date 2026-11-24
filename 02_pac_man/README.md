@@ -4,27 +4,26 @@ Console Pac-Man in plain C (C99). See [requirements.md](requirements.md).
 
 ## Build and test
 
+One build system: GNU Make. Shared parts live in `Makefile.common`, included by both OS-specific makefiles.
+
 ```
-make                # builds build/pacman
+make                # POSIX: builds build/pacman (shared parts in Makefile.common)
 make test           # builds and runs the cmocka unit tests (needs cmocka, e.g. sudo apt-get install libcmocka-dev)
-make CMOCKA_PREFIX=/path/to/cmocka test   # use a cmocka installed in a custom prefix
+make CMOCKA_ROOT=/path/to/cmocka test   # use a cmocka installed in a custom prefix
 make smoke          # headless smoke runs: piped input and a pseudo-terminal run
-make coverage       # runs tests + smoke runs under gcov/lcov and writes docs/coverage-report + docs/coverage.md data
+make coverage       # runs tests + smoke runs under gcov/lcov and writes docs/coverage-report (POSIX only)
 ```
 
-### Windows (MinGW gcc + CMake)
-
-With a MinGW gcc (e.g. from the Ruby DevKit) and a self-compiled cmocka (x86 or x64):
+### Windows (MinGW make, e.g. from the Ruby DevKit)
 
 ```
-cmake -S . -B build -G "MinGW Makefiles" -DCMOCKA_ROOT=C:/cmocka/x64
-cmake --build build
-ctest --test-dir build
-.\build\pacman.exe            # play: [WASD] move, [Q] quit
-echo dq | .\build\pacman.exe  # smoke run with piped input
+mingw32-make -f Makefile.win CMOCKA_ROOT=C:\cmocka\x64
+mingw32-make -f Makefile.win test
+mingw32-make -f Makefile.win smoke
+build\pacman.exe            REM play: [WASD] move, [Q] quit
 ```
 
-Use the x64 cmocka for a 64-bit gcc, the x86 build for 32-bit. Prefer a static `libcmocka.a`; when linking the DLL, place `cmocka.dll` next to the executables. Without `mingw32-make`, use a generator you have (e.g. `-G Ninja`). The `#ifdef _WIN32` console layer uses `conio.h` + `SetConsoleMode` (ANSI clear when virtual-terminal processing is available, `cls` otherwise); piped input falls back to plain `getchar`.
+Use the x64 cmocka for a 64-bit gcc, the x86 build for 32-bit. Prefer a static `libcmocka.a`; when linking the DLL, place `cmocka.dll` next to the executables. The `#ifdef _WIN32` console layer in the entry point uses `conio.h` + `SetConsoleMode` (ANSI clear when virtual-terminal processing is available, `cls` otherwise); piped input falls back to plain `getchar`. `make coverage` (lcov) is POSIX-only.
 
 ## Run
 

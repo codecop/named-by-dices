@@ -1,0 +1,15 @@
+# Windows build with MinGW make (e.g. from the Ruby DevKit):
+#   mingw32-make -f Makefile.win CMOCKA_ROOT=C:\cmocka\x64
+#   mingw32-make -f Makefile.win test
+#   mingw32-make -f Makefile.win smoke
+# Shared parts: Makefile.common.
+include Makefile.common
+
+.PHONY: smoke clean
+
+smoke: $(GAME)
+	echo dq | $(GAME) > NUL
+
+clean:
+	if exist $(BUILD) rmdir /s /q $(BUILD)
+	if exist $(COV) rmdir /s /q $(COV)

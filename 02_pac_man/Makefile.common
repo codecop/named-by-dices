@@ -1,0 +1,47 @@
+# Shared parts of Makefile (POSIX) and Makefile.win (Windows/MinGW). Build files are exempt from the naming skill.
+CC ?= gcc
+CFLAGS ?= -std=c99 -Wall -Wextra -Werror -pedantic -O2 -g
+CMOCKA_ROOT ?= /usr
+
+SRC_DIR := src
+BUILD := build
+COV := build-cov
+MAIN_SRC := $(SRC_DIR)/i_processor_factory.c
+LIB_SRC := $(filter-out $(MAIN_SRC),$(wildcard $(SRC_DIR)/*.c))
+TEST_SRC := $(wildcard $(SRC_DIR)/test/*_test.c)
+
+CMOCKA_CFLAGS := -I$(CMOCKA_ROOT)/include
+CMOCKA_LIBS := -L$(CMOCKA_ROOT)/lib -lcmocka
+
+ifeq ($(OS),Windows_NT)
+EXE := .exe
+RUN :=
+else
+EXE :=
+RUN := ./
+CMOCKA_LIBS += -Wl,-rpath,$(CMOCKA_ROOT)/lib
+endif
+
+GAME := $(BUILD)/pacman$(EXE)
+TESTS := $(BUILD)/run_tests$(EXE)
+
+.PHONY: all test
+
+all: $(GAME)
+
+$(GAME): $(LIB_SRC) $(MAIN_SRC) | $(BUILD)
+	$(CC) $(CFLAGS) -I$(SRC_DIR) -o $@ $(LIB_SRC) $(MAIN_SRC)
+
+$(TESTS): $(LIB_SRC) $(TEST_SRC) | $(BUILD)
+	$(CC) $(CFLAGS) -I$(SRC_DIR) $(CMOCKA_CFLAGS) -o $@ $(LIB_SRC) $(TEST_SRC) $(CMOCKA_LIBS)
+
+test: $(TESTS)
+	$(RUN)$(TESTS)
+
+ifeq ($(OS),Windows_NT)
+$(BUILD):
+	if not exist $(BUILD) mkdir $(BUILD)
+else
+$(BUILD):
+	mkdir -p $@
+endif
