@@ -20,6 +20,10 @@ make coverage       # runs tests + smoke runs under gcov/lcov and writes docs/co
 
 Keys: `[W]` up, `[A]` left, `[S]` down, `[D]` right, `[Q]` quit. Ctrl+C also quits.
 
+## Demo
+
+Animated GIF of a real headless run (Pac-Man eats dots, grabs a power pellet, ghosts turn frightened): [docs/demo.gif](docs/demo.gif). Frames: [docs/frame-move-0.png](docs/frame-move-0.png), [docs/frame-move-9.png](docs/frame-move-9.png), [docs/frame-move-18.png](docs/frame-move-18.png). Created with the `capture-demo` skill.
+
 ## Layout
 
 ```
