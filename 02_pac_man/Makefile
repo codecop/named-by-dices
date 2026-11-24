@@ -7,7 +7,7 @@ GENHTML ?= genhtml
 SRC_DIR := src
 BUILD := build
 COV := build-cov
-MAIN_SRC := $(SRC_DIR)/@E@.c
+MAIN_SRC := $(SRC_DIR)/i_processor_factory.c
 LIB_SRC := $(filter-out $(MAIN_SRC),$(wildcard $(SRC_DIR)/*.c))
 TEST_SRC := $(wildcard $(SRC_DIR)/test/*_test.c)
 
