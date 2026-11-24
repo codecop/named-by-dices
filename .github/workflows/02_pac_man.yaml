@@ -1,8 +1,7 @@
-name: 02_pac_man
+name: Test 02_pac_man
 
 on:
   push:
-    branches: ['**']
     paths:
       - '02_pac_man/**'
       - '.github/workflows/02_pac_man.yaml'
@@ -14,45 +13,60 @@ on:
 jobs:
   linux:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: 02_pac_man
     steps:
-      - uses: actions/checkout@v4
-      - name: Install cmocka and lcov
-        run: sudo apt-get update && sudo apt-get install -y libcmocka-dev lcov
-      - name: Build
-        run: make
-      - name: Unit tests (cmocka)
-        run: make test
-      - name: Smoke tests (pipe + pty)
-        run: make smoke
-      - name: Coverage (gcov/lcov)
-        run: make coverage
-      - name: Upload coverage report
-        uses: actions/upload-artifact@v4
-        with:
-          name: coverage-report-02_pac_man
-          path: 02_pac_man/docs/coverage-report
+    - name: Check out the repo
+      uses: actions/checkout@v7
+
+    - name: Set up dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libcmocka-dev lcov
+
+    - name: Build
+      working-directory: 02_pac_man
+      run: make
+
+    - name: Test
+      working-directory: 02_pac_man
+      run: make test
+
+    - name: Smoke
+      working-directory: 02_pac_man
+      run: make smoke
+
+    - name: Coverage
+      working-directory: 02_pac_man
+      run: make coverage
+
+    - name: Upload coverage report
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage-report-02_pac_man
+        path: 02_pac_man/docs/coverage-report
 
   windows:
     runs-on: windows-latest
-    defaults:
-      run:
-        working-directory: 02_pac_man
     steps:
-      - uses: actions/checkout@v4
-      - name: Setup MinGW64 with cmocka
-        uses: msys2/setup-msys2@v2
-        with:
-          msystem: mingw64
-          install: make mingw-w64-x86_64-toolchain mingw-w64-x86_64-cmocka
-      - name: Build (Makefile.win)
-        shell: msys2 {0}
-        run: make -f Makefile.win CMOCKA_ROOT=/mingw64 all
-      - name: Unit tests (cmocka, Makefile.win)
-        shell: msys2 {0}
-        run: make -f Makefile.win CMOCKA_ROOT=/mingw64 test
-      - name: Smoke test (piped input, Makefile.win)
-        shell: msys2 {0}
-        run: make -f Makefile.win CMOCKA_ROOT=/mingw64 smoke
+    - name: Check out the repo
+      uses: actions/checkout@v7
+
+    - name: Set up MinGW64 and cmocka
+      uses: msys2/setup-msys2@v2
+      with:
+        msystem: mingw64
+        install: make mingw-w64-x86_64-toolchain mingw-w64-x86_64-cmocka
+
+    - name: Build
+      working-directory: 02_pac_man
+      shell: msys2 {0}
+      run: make -f Makefile.win CMOCKA_ROOT=/mingw64 all
+
+    - name: Test
+      working-directory: 02_pac_man
+      shell: msys2 {0}
+      run: make -f Makefile.win CMOCKA_ROOT=/mingw64 test
+
+    - name: Smoke
+      working-directory: 02_pac_man
+      shell: msys2 {0}
+      run: make -f Makefile.win CMOCKA_ROOT=/mingw64 smoke
