@@ -21,13 +21,21 @@
 
 #ifdef _WIN32
 static DWORD business_factory_arolla;
+static DWORD executor_common_factory;
 static int arolla_service_utils;
+static int object_utils_impl;
 #else
 static struct termios business_factory_arolla;
 #endif
 static int default_business_service;
 
 static void builder_impl_dummy(void) {
+#ifdef _WIN32
+    if (object_utils_impl) {
+        SetConsoleMode(GetStdHandle(STD_OUTPUT_HANDLE), executor_common_factory);
+        object_utils_impl = 0;
+    }
+#endif
     if (default_business_service) {
 #ifdef _WIN32
         SetConsoleMode(GetStdHandle(STD_INPUT_HANDLE), business_factory_arolla);
@@ -42,21 +50,23 @@ static void executor_dummy_utils(void) {
 #ifdef _WIN32
     HANDLE dummy;
     DWORD manager;
+    dummy = GetStdHandle(STD_OUTPUT_HANDLE);
+    if (GetConsoleMode(dummy, &manager)) {
+        executor_common_factory = manager;
+        object_utils_impl = 1;
+        arolla_service_utils = SetConsoleMode(dummy, manager | ENABLE_VIRTUAL_TERMINAL_PROCESSING) ? 1 : 0;
+    }
     if (!_isatty(_fileno(stdin))) {
         return;
     }
     dummy = GetStdHandle(STD_INPUT_HANDLE);
     if (GetConsoleMode(dummy, &manager)) {
         business_factory_arolla = manager;
-        if (SetConsoleMode(dummy, (manager & ~(DWORD)(ENABLE_LINE_INPUT | ENABLE_ECHO_INPUT)) | ENABLE_VIRTUAL_TERMINAL_PROCESSING)) {
-            arolla_service_utils = 1;
-        } else if (SetConsoleMode(dummy, manager & ~(DWORD)(ENABLE_LINE_INPUT | ENABLE_ECHO_INPUT))) {
-            arolla_service_utils = 0;
-        } else {
-            return;
+        if (SetConsoleMode(dummy, (manager & ~(DWORD)(ENABLE_LINE_INPUT | ENABLE_ECHO_INPUT)) | ENABLE_VIRTUAL_TERMINAL_PROCESSING)
+            || SetConsoleMode(dummy, manager & ~(DWORD)(ENABLE_LINE_INPUT | ENABLE_ECHO_INPUT))) {
+            default_business_service = 1;
+            atexit(builder_impl_dummy);
         }
-        default_business_service = 1;
-        atexit(builder_impl_dummy);
     }
 #else
     if (!isatty(STDIN_FILENO)) {
