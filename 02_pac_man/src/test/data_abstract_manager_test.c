@@ -81,6 +81,28 @@ static void pick_deadEnd_reversesDirection(void **state) {
     default_processor_factory(&object);
 }
 
+static void pick_noneDirection_allowsAllFourDirections(void **state) {
+    builder_helper_arolla object;
+    executor_default_service factory;
+    const char *manager[] = { "#######", "#.....#", "#.....#", "#######" };
+    (void)state;
+    i_processor_helper(&object, manager, 4);
+    factory = arolla_data_helper((processor_abstract_impl){ 3, 1 }, AROLLA_IMPL_EXECUTOR);
+    assert_int_equal(object_helper_dummy(&object, &factory, (processor_abstract_impl){ 3, 3 }, 0, utils, NULL), SERVICE_COMMON_PROCESSOR);
+    default_processor_factory(&object);
+}
+
+static void pick_chase_picksClosestAmongAlternatives(void **state) {
+    builder_helper_arolla object;
+    executor_default_service factory;
+    const char *manager[] = { "#######", "#.....#", "#.....#", "#.....#", "#######" };
+    (void)state;
+    i_processor_helper(&object, manager, 5);
+    factory = arolla_data_helper((processor_abstract_impl){ 3, 2 }, AROLLA_DATA_SERVICE);
+    assert_int_equal(object_helper_dummy(&object, &factory, (processor_abstract_impl){ 1, 3 }, 0, utils, NULL), SERVICE_COMMON_PROCESSOR);
+    default_processor_factory(&object);
+}
+
 int utils_dummy_object(void) {
     static const struct CMUnitTest dummy[] = {
         cmocka_unit_test(make_setsHomeChaseModeAndZeroFright),
@@ -88,7 +110,9 @@ int utils_dummy_object(void) {
         cmocka_unit_test(pick_chase_tieKeepsUpLeftDownRightOrder),
         cmocka_unit_test(pick_neverReversesEvenWhenTargetIsBehind),
         cmocka_unit_test(pick_frightened_usesInjectedRng),
-        cmocka_unit_test(pick_deadEnd_reversesDirection)
+        cmocka_unit_test(pick_deadEnd_reversesDirection),
+        cmocka_unit_test(pick_noneDirection_allowsAllFourDirections),
+        cmocka_unit_test(pick_chase_picksClosestAmongAlternatives)
     };
     return cmocka_run_group_tests(dummy, NULL, NULL);
 }

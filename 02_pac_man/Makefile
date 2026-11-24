@@ -35,6 +35,7 @@ test: $(TESTS)
 
 smoke: $(GAME)
 	printf 'dq' | ./$(GAME) > /dev/null
+	printf '' | ./$(GAME) > /dev/null
 	python3 $(SRC_DIR)/test/smoke_pty.py ./$(GAME)
 
 COV_FLAGS := -std=c99 -Wall -Wextra -Werror -pedantic -O0 -g --coverage
@@ -57,6 +58,7 @@ $(COV)/run_tests: $(COV_LIB_OBJ) $(COV_TEST_OBJ) | $(COV)
 coverage: $(COV)/pacman $(COV)/run_tests
 	./$(COV)/run_tests
 	printf 'dq' | ./$(COV)/pacman > /dev/null
+	printf '' | ./$(COV)/pacman > /dev/null
 	python3 $(SRC_DIR)/test/smoke_pty.py ./$(COV)/pacman
 	$(LCOV) --capture --directory $(COV) --output-file $(COV)/coverage.info --rc lcov_branch_coverage=1
 	$(GENHTML) --branch-coverage -o docs/coverage-report $(COV)/coverage.info

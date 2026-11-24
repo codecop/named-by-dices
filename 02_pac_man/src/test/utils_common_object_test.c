@@ -68,9 +68,23 @@ static void outOfBounds_isNotPassable(void **state) {
     (void)state;
     dummy = factory_business_dummy();
     assert_int_equal(default_factory_processor(dummy, -1, 0), 0);
-    assert_int_equal(object_manager_common(dummy, -1, 0), 0);
+    assert_int_equal(default_factory_processor(dummy, 0, -1), 0);
     assert_int_equal(default_factory_processor(dummy, 21, 0), 0);
+    assert_int_equal(default_factory_processor(dummy, 0, 15), 0);
+    assert_int_equal(object_manager_common(dummy, -1, 0), 0);
+    assert_int_equal(object_manager_common(dummy, 0, -1), 0);
+    assert_int_equal(object_manager_common(dummy, 21, 0), 0);
     assert_int_equal(object_manager_common(dummy, 0, 15), 0);
+}
+
+static void boardWithoutPacStart_returnsMinusOne(void **state) {
+    builder_helper_arolla dummy;
+    const char *factory[] = { "###", "#.#", "###" };
+    (void)state;
+    i_processor_helper(&dummy, factory, 3);
+    assert_int_equal(builder_utils_dummy(&dummy), -1);
+    assert_int_equal(utils_business_arolla(&dummy), -1);
+    default_processor_factory(&dummy);
 }
 
 static void customBoard_setCellThenReset_restoresMap(void **state) {
@@ -103,7 +117,8 @@ int executor_default_factory(void) {
         cmocka_unit_test(defaultBoard_ghostStartsAreInHouse),
         cmocka_unit_test(door_blocksPacButNotGhost_wallBlocksBoth_dotPassesBoth),
         cmocka_unit_test(outOfBounds_isNotPassable),
-        cmocka_unit_test(customBoard_setCellThenReset_restoresMap)
+        cmocka_unit_test(customBoard_setCellThenReset_restoresMap),
+        cmocka_unit_test(boardWithoutPacStart_returnsMinusOne)
     };
     return cmocka_run_group_tests(dummy, NULL, NULL);
 }

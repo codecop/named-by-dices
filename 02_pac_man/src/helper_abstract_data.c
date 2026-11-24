@@ -38,3 +38,23 @@ int dummy_business_impl(factory_arolla_object *object, const abstract_utils_obje
     free(utils);
     return (int)abstract_executor_impl(object);
 }
+
+void common_processor(int object, const abstract_utils_object *dummy) {
+    if (object == (int)AROLLA_IMPL_BUSINESS) {
+        dummy->factory(dummy->data, "YOU WIN!\n");
+    } else if (object == (int)EXECUTOR_DUMMY_IMPL) {
+        dummy->factory(dummy->data, "GAME OVER\n");
+    } else {
+        dummy->factory(dummy->data, "BYE\n");
+    }
+}
+
+unsigned executor_arolla(void *object) {
+    unsigned *utils = (unsigned *)object;
+    unsigned data = *utils;
+    data ^= data << 13;
+    data ^= data >> 17;
+    data ^= data << 5;
+    *utils = data;
+    return data;
+}

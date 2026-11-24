@@ -16,7 +16,7 @@ void dummy_business_manager(const factory_arolla_object *object, char *dummy, in
     int common = executor_manager_default(factory);
     char *utils = dummy;
     int i;
-    int j;
+    int builder; 
     (void)helper;
     *utils++ = '+';
     for (i = 0; i < data + 2; i++) {
@@ -34,9 +34,9 @@ void dummy_business_manager(const factory_arolla_object *object, char *dummy, in
         *utils++ = '|';
         *utils++ = '\n';
     }
-    for (j = 0; j < common; j++) {
+    for (builder = 0; builder < common; builder++) {
         char manager[data];
-        memcpy(manager, factory->utils + (size_t)j * (size_t)data, (size_t)data);
+        memcpy(manager, factory->utils + (size_t)builder * (size_t)data, (size_t)data);
         for (i = 0; i < data; i++) {
             if (manager[i] == 'P' || manager[i] == 'G') {
                 manager[i] = ' ';
@@ -44,13 +44,13 @@ void dummy_business_manager(const factory_arolla_object *object, char *dummy, in
         }
         for (i = 0; i < UTILS_AROLLA_EXECUTOR; i++) {
             const executor_default_service *service = data_arolla_factory(object, i);
-            if (service->utils.common == j && service->utils.data >= 0 && service->utils.data < data) {
+            if (service->utils.common == builder && service->utils.data >= 0 && service->utils.data < data) {
                 manager[service->utils.data] = (service->helper == AROLLA_BUSINESS_HELPER) ? 'w' : 'M';
             }
         }
         {
             business_manager_arolla executor = dummy_factory_executor(object);
-            if (executor.utils.common == j && executor.utils.data >= 0 && executor.utils.data < data) {
+            if (executor.utils.common == builder && executor.utils.data >= 0 && executor.utils.data < data) {
                 manager[executor.utils.data] = 'C';
             }
         }

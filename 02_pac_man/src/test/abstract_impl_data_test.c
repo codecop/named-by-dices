@@ -155,13 +155,60 @@ static void run_exitsWithLostWhenGhostsCatchPacUntilNoLives(void **state) {
     default_processor_factory(&object_common_impl);
 }
 
+static void announce_won_writesYouWin(void **state) {
+    abstract_utils_object business_common_utils;
+    (void)state;
+    processor();
+    business_common_utils.data = NULL;
+    business_common_utils.factory = utils;
+    common_processor((int)AROLLA_IMPL_BUSINESS, &business_common_utils);
+    assert_non_null(strstr(common, "YOU WIN!"));
+}
+
+static void announce_lost_writesGameOver(void **state) {
+    abstract_utils_object business_common_utils;
+    (void)state;
+    processor();
+    business_common_utils.data = NULL;
+    business_common_utils.factory = utils;
+    common_processor((int)EXECUTOR_DUMMY_IMPL, &business_common_utils);
+    assert_non_null(strstr(common, "GAME OVER"));
+}
+
+static void announce_running_writesBye(void **state) {
+    abstract_utils_object business_common_utils;
+    (void)state;
+    processor();
+    business_common_utils.data = NULL;
+    business_common_utils.factory = utils;
+    common_processor((int)BUSINESS_SERVICE_I, &business_common_utils);
+    assert_non_null(strstr(common, "BYE"));
+}
+
+static void xorshift_isDeterministicAndAdvancesState(void **state) {
+    unsigned object_common_impl = 12345u;
+    unsigned builder_common_factory = 12345u;
+    unsigned utils_dummy;
+    unsigned impl_dummy;
+    (void)state;
+    utils_dummy = executor_arolla(&object_common_impl);
+    impl_dummy = executor_arolla(&builder_common_factory);
+    assert_int_equal(utils_dummy, impl_dummy);
+    assert_true(object_common_impl != 12345u);
+    assert_true(utils_dummy != 0u);
+}
+
 int arolla_processor_utils(void) {
     static const struct CMUnitTest dummy[] = {
         cmocka_unit_test(keyDir_mapsWasdToDirectionsAndRestToNone),
         cmocka_unit_test(run_quitsWhenQPressed_rendersTwiceAndStaysRunning),
         cmocka_unit_test(run_dKeySteersPacRightAndEatsDot),
         cmocka_unit_test(run_exitsWithWonWhenLastDotIsEaten),
-        cmocka_unit_test(run_exitsWithLostWhenGhostsCatchPacUntilNoLives)
+        cmocka_unit_test(run_exitsWithLostWhenGhostsCatchPacUntilNoLives),
+        cmocka_unit_test(announce_won_writesYouWin),
+        cmocka_unit_test(announce_lost_writesGameOver),
+        cmocka_unit_test(announce_running_writesBye),
+        cmocka_unit_test(xorshift_isDeterministicAndAdvancesState)
     };
     return cmocka_run_group_tests(dummy, NULL, NULL);
 }

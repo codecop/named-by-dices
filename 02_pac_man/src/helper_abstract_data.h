@@ -15,5 +15,7 @@ typedef struct {
 
 default_builder_impl executor_common_helper(int object);
 int dummy_business_impl(factory_arolla_object *object, const abstract_utils_object *dummy, helper_object_default helper, void *manager);
+void common_processor(int object, const abstract_utils_object *dummy);
+unsigned executor_arolla(void *object);
 
 #endif
