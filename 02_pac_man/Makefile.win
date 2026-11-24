@@ -11,5 +11,6 @@ smoke: $(GAME)
 	echo dq | $(GAME) > NUL
 
 clean:
-	if exist $(BUILD) rmdir /s /q $(BUILD)
-	if exist $(COV) rmdir /s /q $(COV)
+	-rm -rf $(BUILD) $(COV) 2>nul
+	-if exist $(BUILD) rmdir /s /q $(BUILD) 2>nul
+	-if exist $(COV) rmdir /s /q $(COV) 2>nul
