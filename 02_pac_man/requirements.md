@@ -46,7 +46,7 @@ Console Pac-Man in plain C (standard C99). See <https://en.wikipedia.org/wiki/Pa
 
 ## Implementation
 
-* Plain C, standard C99 (`-std=c99 -Wall -Wextra -Werror -pedantic`), built with a `Makefile`.
+* Plain C, standard C99 (`-std=c99 -Wall -Wextra -Werror -pedantic`), built with a `Makefile` (POSIX) or `CMakeLists.txt` (Windows/MinGW); the console layer has a `_WIN32` branch (`conio.h`/`SetConsoleMode`) and a POSIX branch (termios/poll).
 * Unit tests with [cmocka](https://cmocka.org) ("c-mokka"), kept with the code in `src/test/`; test method names are descriptive (`<state>_<act>_<expected>`).
 * Full code coverage; coverage documents are kept in the task-local `docs` folder.
 * MUST FOLLOW `naming` skill convention for all names.
