@@ -12,6 +12,20 @@ make smoke          # headless smoke runs: piped input and a pseudo-terminal run
 make coverage       # runs tests + smoke runs under gcov/lcov and writes docs/coverage-report + docs/coverage.md data
 ```
 
+### Windows (MinGW gcc + CMake)
+
+With a MinGW gcc (e.g. from the Ruby DevKit) and a self-compiled cmocka (x86 or x64):
+
+```
+cmake -S . -B build -G "MinGW Makefiles" -DCMOCKA_ROOT=C:/cmocka/x64
+cmake --build build
+ctest --test-dir build
+.\build\pacman.exe            # play: [WASD] move, [Q] quit
+echo dq | .\build\pacman.exe  # smoke run with piped input
+```
+
+Use the x64 cmocka for a 64-bit gcc, the x86 build for 32-bit. Prefer a static `libcmocka.a`; when linking the DLL, place `cmocka.dll` next to the executables. Without `mingw32-make`, use a generator you have (e.g. `-G Ninja`). The `#ifdef _WIN32` console layer uses `conio.h` + `SetConsoleMode` (ANSI clear when virtual-terminal processing is available, `cls` otherwise); piped input falls back to plain `getchar`.
+
 ## Run
 
 ```

@@ -21,6 +21,8 @@ All game code in `src/` (the `src/test/` files are the tests themselves and are 
 
 Function coverage is 100.0% (48/48) as well.
 
+Note: the `#ifdef _WIN32` branches of the entry point (`i_processor_factory.c`, conio/`SetConsoleMode` console layer) are compiled only on Windows and are therefore not part of this Linux coverage run; they are syntax-checked with `-D_WIN32` and exercised by the Windows build.
+
 ## Regenerate
 
 ```
