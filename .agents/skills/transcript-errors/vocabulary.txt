@@ -27,3 +27,10 @@ fuhre -> führe
 fur -> für
 worte -> Wörter
 list es hier -> liste es hier
+# aus anderer Session:
+papiricrepo -> public repo
+Bücher zu klonen -> Repo zu klonen
+entfirmen -> entfernen
+Connect-Mistral-MD -> CONNECT-MISTRAL.md
+schritte -> Schritte
+pusht -> pushen (Denglisch im Dev-Kontext ok, alternativ "senden")
