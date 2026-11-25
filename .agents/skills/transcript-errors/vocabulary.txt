@@ -34,3 +34,26 @@ entfirmen -> entfernen
 Connect-Mistral-MD -> CONNECT-MISTRAL.md
 schritte -> Schritte
 pusht -> pushen (Denglisch im Dev-Kontext ok, alternativ "senden")
+# aus anderer Session (nur relevante):
+wieviel -> wie viel (getrennt)
+platte -> Platte (Nomen gross)
+webszche -> welche
+sgeet -> speichert / gespeichert
+data -> Daten
+Koyab -> Koyeb (Eigenname)
+infert -> inferiert
+deployed -> läuft (Denglisch; "deployed" ok, besser "läuft")
+soveteign -> souverän
+lauft -> läuft
+betrufft -> betrifft
+Misstrauen -> Mistral (Eigenname)
+Kommandozeil -> Kommandozeile
+das E-Mail -> die E-Mail
+credntials -> credentials
+kwey values -> key-values / Key-Value-Paare
+lisze -> liste
+wmit -> mit
+typos -> Tippfehler
+# nicht aufgenommen (unklar oder satzwertig): KP Pro, zu allen Marketing,
+# tabs des Produktes, in gesetzten, einen den Nutzer definieren, abblicken,
+# win vocabulary file; fur/list es hier/falsche worte waren schon vorhanden
