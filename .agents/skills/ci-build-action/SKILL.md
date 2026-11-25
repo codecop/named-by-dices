@@ -55,10 +55,13 @@ jobs:
 * linux job: `sudo apt-get install -y libcmocka-dev lcov`, then `make`, `make test`, `make smoke`, `make coverage`, upload `02_pac_man/docs/coverage-report` as artifact.
 * windows job: msys2 mingw64 with cmocka, then `make -f Makefile.win CMOCKA_ROOT=/mingw64 all` / `test` / `smoke`.
 
-## Gotchas (learned the hard way)
+### C/Windows-only gotchas (rare - only for C/C++ with a Windows job)
 
 * msys2 `install:` must include the `make` package, otherwise the Windows job fails with `make: command not found` (exit 127).
 * In makefiles use `CC = gcc` (not `CC ?= gcc`): GNU make's builtin `CC=cc` would win otherwise; command-line `make CC=...` still overrides.
 * Make Windows makefile recipes shell-portable (`-mkdir $(BUILD) 2>nul`, `echo ... | exe > NUL`), so they work in both `cmd.exe` and the msys2 shell.
 * On Windows enable `ENABLE_VIRTUAL_TERMINAL_PROCESSING` on the **output** console handle as well, otherwise ANSI clear-screen prints escape garbage; keep a `system("cls")` fallback and restore the old mode on exit.
+
+## Gotchas (language agnostic)
+
 * Validate the file (`python3 -c "import yaml; yaml.safe_load(open(...))"`) and watch the run: `gh run list --repo <owner>/<repo> --branch <branch>` and `gh run view <id> --log-failed`.
