@@ -34,7 +34,15 @@ jobs:
 ```
 
 * `push` without a `branches:` filter = all branches; `paths:` limits the run to changes in the task folder and in the workflow file itself.
-* Every job: named steps, checkout first, per-step `working-directory: <task-folder>` (not `defaults:`), then build and test.
+
+## Step structure, formatting and naming
+
+* One action per step: a flat list under `steps:`, **blank line between steps**, 2-space indentation (as in `C.yml`).
+* Every step starts with `- name:` (short capitalised label), then either `uses:` (an action) or `run:` (shell). Multi-line commands use `run: |`, single commands plain `run: make test`.
+* Standard step names and order: `Check out the repo` (`actions/checkout` first) -> `Set up dependencies` / `Set up <toolchain>` (apt-get, setup-msys2, setup-java, ...) -> `Build` -> `Test` -> optional `Smoke`, `Coverage`, `Upload ...` (artifact upload last).
+* Put `working-directory: <task-folder>` on every `run` step of the job (not in `defaults:`), so each step reads standalone top-down.
+* Set `shell:` only where needed (e.g. `shell: msys2 {0}` on the Windows msys2 steps); Linux jobs use the default shell.
+* Job names stay short (`linux`, `windows`, or the build system like `build`, `cmake` in `C.yml`); the workflow `name:` is `Test <task-folder>`.
 
 ## Jobs per language
 
