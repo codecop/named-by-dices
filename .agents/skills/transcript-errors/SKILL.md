@@ -23,4 +23,4 @@ Ask one short question instead of guessing silently, e.g. "War das ein Transkrip
 
 ## Vocabulary file
 
-Keep recurring (misheard -> correct) pairs in the user's speech vocabulary file, e.g. `requirelements.md -> requirements.md`, `c-Mokka -> cmocka`, `vompilietre -> kompilierte`, `already for refusals -> ready for review setzen`, `Bildsystem -> Buildsystem`.
+Keep recurring (misheard -> correct) pairs in [vocabulary.txt](vocabulary.txt) next to this skill (one pair per line, `wrong -> correct`); it is seeded with the pairs from the 02_pac_man session, e.g. `requirelements.md -> requirements.md`, `c-Mokka -> cmocka`, `vompilietre -> kompilierte`, `already for refusals -> ready for review setzen`, `Bildsystem -> Buildsystem`.

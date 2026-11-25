@@ -1,0 +1,29 @@
+# Speech vocabulary: misheard transcript / typo -> correct form
+# One pair per line. Seeded with the pairs from the 02_pac_man session.
+# Transcript (ASR) errors:
+already for refusals -> ready for review setzen
+Bildsystem -> Buildsystem
+erszens -> ersetze
+vompilietre -> kompilierte
+bulid -> build
+scriptsa -> scripts
+helpets -> helpers
+excemp -> exempt
+skill md -> SKILL.md
+c-Mokka -> cmocka
+requirelements.md -> requirements.md
+ruby dev kit -> Ruby DevKit
+mingw -> MinGW
+cmake -> CMake
+windows -> Windows
+eine gcc -> einen GCC
+der build -> der Build
+documentes -> documents
+falsche worte -> falsche Wörter
+vocabulary file -> Vokabular-Datei
+Folder -> Ordner
+# Plain typos / umlaut slips (corrected inline as well):
+fuhre -> führe
+fur -> für
+worte -> Wörter
+list es hier -> liste es hier
