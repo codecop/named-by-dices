@@ -1,59 +1,31 @@
-# Speech vocabulary: misheard transcript / typo -> correct form
-# One pair per line. Seeded with the pairs from the 02_pac_man session.
-# Transcript (ASR) errors:
+# Speech vocabulary: phonetic mishearings (ASR transcript errors) -> correct form
+# One pair per line. Only sound-based transcript errors per the skill's rules 1-3
+# (sound-alike/homophones, context, typical patterns: dropped words, DE/EN technical
+# terms, truncations). Plain typos, letter swaps, umlaut and casing slips are corrected
+# inline and deliberately not listed here.
 already for refusals -> ready for review setzen
-Bildsystem -> Buildsystem
-erszens -> ersetze
-vompilietre -> kompilierte
-bulid -> build
-scriptsa -> scripts
-helpets -> helpers
-excemp -> exempt
-skill md -> SKILL.md
-c-Mokka -> cmocka
-requirelements.md -> requirements.md
-ruby dev kit -> Ruby DevKit
-mingw -> MinGW
-cmake -> CMake
-windows -> Windows
-eine gcc -> einen GCC
-der build -> der Build
-documentes -> documents
-falsche worte -> falsche Wörter
-vocabulary file -> Vokabular-Datei
-Folder -> Ordner
-# Plain typos / umlaut slips (corrected inline as well):
-fuhre -> führe
-fur -> für
-worte -> Wörter
-list es hier -> liste es hier
-# aus anderer Session:
-papiricrepo -> public repo
-Bücher zu klonen -> Repo zu klonen
-entfirmen -> entfernen
-Connect-Mistral-MD -> CONNECT-MISTRAL.md
-schritte -> Schritte
-pusht -> pushen (Denglisch im Dev-Kontext ok, alternativ "senden")
-# aus anderer Session (nur relevante):
-wieviel -> wie viel (getrennt)
-platte -> Platte (Nomen gross)
-webszche -> welche
-sgeet -> speichert / gespeichert
-data -> Daten
-Koyab -> Koyeb (Eigenname)
-infert -> inferiert
-deployed -> läuft (Denglisch; "deployed" ok, besser "läuft")
-soveteign -> souverän
-lauft -> läuft
 betrufft -> betrifft
-Misstrauen -> Mistral (Eigenname)
+Bildsystem -> Buildsystem
+bulid -> build
+c-Mokka -> cmocka
+Connect-Mistral-MD -> CONNECT-MISTRAL.md
+data -> Daten
+entfirmen -> entfernen
+erszens -> ersetze
+excemp -> exempt
+helpets -> helpers
+infert -> inferiert
 Kommandozeil -> Kommandozeile
-das E-Mail -> die E-Mail
-credntials -> credentials
+Koyab -> Koyeb
 kwey values -> key-values / Key-Value-Paare
-lisze -> liste
-wmit -> mit
-typos -> Tippfehler
-# nicht aufgenommen (unklar oder satzwertig): KP Pro, zu allen Marketing,
-# tabs des Produktes, in gesetzten, einen den Nutzer definieren, abblicken,
-# win vocabulary file; fur/list es hier/falsche worte waren schon vorhanden
+Misstrauen -> Mistral
+papiricrepo -> public repo
+requirelements.md -> requirements.md
+scriptsa -> scripts
+sgeet -> speichert / gespeichert
+skill md -> SKILL.md
+soveteign -> souverän
+vocabulary file -> Vokabular-Datei
+vompilietre -> kompilierte
+webszche -> welche
+wieviel -> wie viel
