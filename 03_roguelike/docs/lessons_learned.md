@@ -110,3 +110,9 @@ first commit*, so the error class can never occur silently.
 - **A1 silent zero-test run** -> from day one, a test run is only green if it ran tests:
   `test.sh`/CI fails on `Ran 0 tests`; the convention "test methods start with `test_`" is enforced
   by that guard.
+- **A6 runner/UI surprises** -> focus on tests earlier and at domain level: besides logic unit
+  tests with mocks, write game-level tests through the real IO seam from the start — drive
+  `ManagerIExecutor` with the real stdin reader and scripted commands and assert on the *rendered
+  frames* (what is actually visible, message line, UI parity like `Q`/`quit`, odd input). Edge
+  focus: empty/EOF/uppercase/long input, UI parity, save/load round trips through the real binary.
+  This catches UI/rendering surprises before the manual play-test plan has to find them.
