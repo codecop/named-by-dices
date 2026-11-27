@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
+#include <setjmp.h>
 #include <cmocka.h>
 
 #include "../object_abstract_helper.h"

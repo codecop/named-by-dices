@@ -14,12 +14,12 @@ make smoke          # headless smoke runs: piped input and a pseudo-terminal run
 make coverage       # runs tests + smoke runs under gcov/lcov and writes docs/coverage-report (POSIX only)
 ```
 
-### Windows (MinGW make, e.g. from the Ruby DevKit)
+### Windows (any GNU make in PATH, e.g. mingw32-make from MSYS2/MinGW)
 
 ```
-mingw32-make -f Makefile.win CMOCKA_ROOT=C:\cmocka\x64
-mingw32-make -f Makefile.win test
-mingw32-make -f Makefile.win smoke
+make -f Makefile.win CMOCKA_ROOT=E:\Develop\C\Katas\lib\cmocka-1.1.5_x64 all
+make -f Makefile.win test
+make -f Makefile.win smoke   REM run from an MSYS2/MinGW shell, not plain PowerShell
 build\pacman.exe            REM play: [WASD] move, [Q] quit
 ```
 

@@ -1,3 +1,4 @@
+#include <setjmp.h>
 #include <cmocka.h>
 
 #include "../impl_data_abstract.h"

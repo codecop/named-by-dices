@@ -1,4 +1,5 @@
 #include <stddef.h>
+#include <setjmp.h>
 #include <cmocka.h>
 
 #include "../business_i_service.h"

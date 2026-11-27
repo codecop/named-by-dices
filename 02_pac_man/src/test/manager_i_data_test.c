@@ -1,3 +1,4 @@
+#include <setjmp.h>
 #include <cmocka.h>
 
 #include "../data_utils_arolla.h"

@@ -1,3 +1,4 @@
+#include <setjmp.h>
 #include <cmocka.h>
 
 extern int executor_default_factory(void);
