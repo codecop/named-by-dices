@@ -116,3 +116,13 @@ first commit*, so the error class can never occur silently.
   frames* (what is actually visible, message line, UI parity like `Q`/`quit`, odd input). Edge
   focus: empty/EOF/uppercase/long input, UI parity, save/load round trips through the real binary.
   This catches UI/rendering surprises before the manual play-test plan has to find them.
+- **B1-B4 test-coverage gaps, formulated generally** -> unit tests with mocks are not enough;
+  add the missing test *kinds* up front:
+  - generation/dungeon code: **property-based tests** — invariants over many seeds and *all*
+    depths (e.g. "no artefact above max depth"), not only one positive example per feature;
+  - config parsing/generation: **edge configs** (missing monster/item/artefact/trap sections,
+    malformed lines) must start or fail with a clear error;
+  - game loop: **loop × renderer integration tests** (a final frame is rendered on game over;
+    what the frame actually shows);
+  - UI: **parity and odd-input edge tests through the real seam** (every tty command reachable
+    via stdin words; empty/EOF/uppercase/long input).
