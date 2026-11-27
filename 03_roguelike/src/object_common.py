@@ -1,82 +1,73 @@
-"""Position helpers and the actor base class."""
-
-PROCESSOR_I = tuple[int, int]
+type PROCESSOR_I = tuple[int, int]
 
 
-def builder_default(pos: PROCESSOR_I) -> list[PROCESSOR_I]:
-    """Return the four orthogonal neighbours of pos."""
-    x, y = pos
-    return [(x, y - 1), (x, y + 1), (x - 1, y), (x + 1, y)]
-
-
-def data_arolla(pos: PROCESSOR_I) -> list[PROCESSOR_I]:
-    """Return the eight surrounding neighbours of pos."""
-    x, y = pos
+def builder_default(data: PROCESSOR_I) -> list[PROCESSOR_I]:
+    helper, service = data
     return [
-        (x + dx, y + dy)
-        for dx in (-1, 0, 1)
-        for dy in (-1, 0, 1)
-        if (dx, dy) != (0, 0)
+        (helper, service - 1),
+        (helper, service + 1),
+        (helper - 1, service),
+        (helper + 1, service),
     ]
 
 
-def i_data(a: PROCESSOR_I, b: PROCESSOR_I) -> int:
-    """Return the Manhattan distance between a and b."""
-    return abs(a[0] - b[0]) + abs(a[1] - b[1])
+def data_arolla(data: PROCESSOR_I) -> list[PROCESSOR_I]:
+    helper, service = data
+    return [
+        (helper + builder, service + business)
+        for builder in (-1, 0, 1)
+        for business in (-1, 0, 1)
+        if (builder, business) != (0, 0)
+    ]
 
 
-def service_dummy(src: PROCESSOR_I, dst: PROCESSOR_I) -> PROCESSOR_I:
-    """Return one eight-directional step from src towards dst."""
-    dx = dst[0] - src[0]
-    dy = dst[1] - src[1]
-    if dx == 0 and dy == 0:
-        return src
-    if dx != 0 and abs(dx) >= abs(dy):
-        return (src[0] + (1 if dx > 0 else -1), src[1])
-    return (src[0], src[1] + (1 if dy > 0 else -1))
+def i_data(data: PROCESSOR_I, helper: PROCESSOR_I) -> int:
+    return abs(data[0] - helper[0]) + abs(data[1] - helper[1])
 
 
-def helper_i(pos: PROCESSOR_I, width: int, height: int) -> bool:
-    """Return whether pos lies inside a grid of the given size."""
-    return 0 <= pos[0] < width and 0 <= pos[1] < height
+def service_dummy(data: PROCESSOR_I, helper: PROCESSOR_I) -> PROCESSOR_I:
+    builder = helper[0] - data[0]
+    business = helper[1] - data[1]
+    if builder == 0 and business == 0:
+        return data
+    if builder != 0 and abs(builder) >= abs(business):
+        return (data[0] + (1 if builder > 0 else -1), data[1])
+    return (data[0], data[1] + (1 if business > 0 else -1))
+
+
+def helper_i(data: PROCESSOR_I, common: int, default: int) -> bool:
+    return 0 <= data[0] < common and 0 <= data[1] < default
 
 
 class ImplCommonProcessor:
-    """Base class for actors: the player, monsters and helpers."""
-
-    def __init__(self, letter: str, name: str, pos: PROCESSOR_I, hp: int) -> None:
-        self.letter = letter
-        self.name = name
-        self.pos = pos
-        self.hp = hp
-        self.max_hp = hp
+    def __init__(self, impl: str, service: str, data: PROCESSOR_I, helper: int) -> None:
+        self.impl = impl
+        self.service = service
+        self.data = data
+        self.helper = helper
+        self.factory = helper
 
     @property
     def i_object(self) -> bool:
-        """Return whether the actor is still alive."""
-        return self.hp > 0
+        return self.helper > 0
 
-    def utils_data(self, amount: int) -> None:
-        """Reduce hp by amount, but not below zero."""
-        self.hp = max(0, self.hp - amount)
+    def utils_data(self, data: int) -> None:
+        self.helper = max(0, self.helper - data)
 
-    def processor_i(self, amount: int) -> None:
-        """Restore hp by amount, but not above max_hp."""
-        self.hp = min(self.max_hp, self.hp + amount)
+    def processor_i(self, data: int) -> None:
+        self.helper = min(self.factory, self.helper + data)
 
     def data_service(self) -> dict:
-        """Serialise the common actor state to a plain dictionary."""
         return {
-            "letter": self.letter,
-            "name": self.name,
-            "pos": list(self.pos),
-            "hp": self.hp,
-            "max_hp": self.max_hp,
+            "letter": self.impl,
+            "name": self.service,
+            "pos": list(self.data),
+            "hp": self.helper,
+            "max_hp": self.factory,
         }
 
     @classmethod
     def factory_default(cls, data: dict) -> "ImplCommonProcessor":
-        """Rebuild a base actor from its serialised state."""
         actor = cls(data["letter"], data["name"], tuple(data["pos"]), data["hp"])
-        actor.max_hp = data["max_hp"]
+        actor.factory = data["max_hp"]
         return actor

@@ -1,5 +1,3 @@
-"""Unit tests for src/object_common.py."""
-
 import unittest
 
 from src.object_common import (
@@ -13,8 +11,6 @@ from src.object_common import (
 
 
 class TestPositionHelpers(unittest.TestCase):
-    """Tests for the module-level position helper functions."""
-
     def test_neighbours4_of_centre_returns_four_orthogonal_cells(self):
         self.assertEqual(builder_default((3, 4)), [(3, 3), (3, 5), (2, 4), (4, 4)])
 
@@ -46,40 +42,38 @@ class TestPositionHelpers(unittest.TestCase):
 
 
 class TestActorBase(unittest.TestCase):
-    """Tests for the actor base class."""
-
     def test_new_actor_has_full_hp_and_is_alive(self):
         actor = ImplCommonProcessor("r", "rat", (1, 1), 5)
         self.assertTrue(actor.i_object)
-        self.assertEqual(actor.hp, 5)
-        self.assertEqual(actor.max_hp, 5)
-        self.assertEqual(actor.pos, (1, 1))
+        self.assertEqual(actor.helper, 5)
+        self.assertEqual(actor.factory, 5)
+        self.assertEqual(actor.data, (1, 1))
 
     def test_hurt_reduces_hp_but_not_below_zero(self):
         actor = ImplCommonProcessor("r", "rat", (1, 1), 5)
         actor.utils_data(3)
-        self.assertEqual(actor.hp, 2)
+        self.assertEqual(actor.helper, 2)
         actor.utils_data(10)
-        self.assertEqual(actor.hp, 0)
+        self.assertEqual(actor.helper, 0)
         self.assertFalse(actor.i_object)
 
     def test_heal_restores_hp_but_not_above_max(self):
         actor = ImplCommonProcessor("r", "rat", (1, 1), 5)
         actor.utils_data(4)
         actor.processor_i(2)
-        self.assertEqual(actor.hp, 3)
+        self.assertEqual(actor.helper, 3)
         actor.processor_i(99)
-        self.assertEqual(actor.hp, 5)
+        self.assertEqual(actor.helper, 5)
 
     def test_to_dict_and_from_dict_round_trip(self):
         actor = ImplCommonProcessor("@", "you", (2, 3), 7)
         actor.utils_data(2)
         clone = ImplCommonProcessor.factory_default(actor.data_service())
-        self.assertEqual(clone.letter, "@")
-        self.assertEqual(clone.name, "you")
-        self.assertEqual(clone.pos, (2, 3))
-        self.assertEqual(clone.hp, 5)
-        self.assertEqual(clone.max_hp, 7)
+        self.assertEqual(clone.impl, "@")
+        self.assertEqual(clone.service, "you")
+        self.assertEqual(clone.data, (2, 3))
+        self.assertEqual(clone.helper, 5)
+        self.assertEqual(clone.factory, 7)
 
 
 if __name__ == "__main__":

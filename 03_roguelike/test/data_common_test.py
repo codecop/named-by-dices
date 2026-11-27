@@ -1,11 +1,9 @@
-"""Unit tests for src/data_common.py."""
-
 import random
 import unittest
+from pathlib import Path
 
+from src.builder_service import business_utils
 from src.data_common import (
-    DUMMY_MANAGER,
-    EXECUTOR_AROLLA,
     ArollaImplData,
     ImplProcessorDefault,
     ManagerBusinessArolla,
@@ -16,8 +14,11 @@ from src.data_common import (
 from src.object_common import builder_default
 
 
+def utils_common():
+    return business_utils(str(Path(__file__).resolve().parent.parent / "game.txt"))
+
+
 def processor_service(level, start):
-    """Flood fill all walkable cells reachable from start (test helper)."""
     seen = {start}
     queue = [start]
     while queue:
@@ -30,8 +31,6 @@ def processor_service(level, start):
 
 
 class TestRoom(unittest.TestCase):
-    """Tests for the room value object."""
-
     def test_centre_is_middle_of_rectangle(self):
         room = ArollaImplData(2, 3, 6, 4)
         self.assertEqual(room.utils_common, (5, 5))
@@ -71,27 +70,19 @@ class TestRoom(unittest.TestCase):
 
 
 class TestTrap(unittest.TestCase):
-    """Tests for the trap type."""
-
-    def test_kinds_are_dart_teleport_and_alarm(self):
-        self.assertEqual(
-            set(ImplProcessorDefault.FACTORY_DEFAULT), {"dart", "teleport", "alarm"}
-        )
-
     def test_hidden_by_default_and_round_trips(self):
         trap = ImplProcessorDefault("dart")
-        self.assertFalse(trap.found)
+        self.assertEqual(trap.data, "dart")
+        self.assertFalse(trap.helper)
         clone = ImplProcessorDefault.i_utils(trap.object_factory())
-        self.assertEqual(clone.kind, "dart")
-        self.assertFalse(clone.found)
-        trap.found = True
+        self.assertEqual(clone.data, "dart")
+        self.assertFalse(clone.helper)
+        trap.helper = True
         clone = ImplProcessorDefault.i_utils(trap.object_factory())
-        self.assertTrue(clone.found)
+        self.assertTrue(clone.helper)
 
 
 class TestGrid(unittest.TestCase):
-    """Tests for the tile grid class."""
-
     def test_out_of_bounds_behaves_like_wall(self):
         grid = UtilsCommonExecutor(10, 10)
         self.assertTrue(grid.factory_default((-1, 0)))
@@ -116,8 +107,6 @@ class TestGrid(unittest.TestCase):
 
 
 class TestEntityLayer(unittest.TestCase):
-    """Tests for the entity layer of a level."""
-
     def test_random_free_cell_is_walkable_and_avoids_given_cells(self):
         grid = UtilsCommonExecutor(20, 20)
         for yy in range(1, 19):
@@ -126,7 +115,7 @@ class TestEntityLayer(unittest.TestCase):
         layer = ServiceObjectCommon()
         rng = random.Random(5)
         for _ in range(20):
-            cell = layer.business_arolla(grid, rng, avoid=((5, 5),), fallback=(1, 1))
+            cell = layer.business_arolla(grid, rng, ((5, 5),), (1, 1))
             self.assertTrue(grid.impl_dummy(cell))
             self.assertNotEqual(cell, (5, 5))
 
@@ -136,30 +125,28 @@ class TestEntityLayer(unittest.TestCase):
             for xx in range(1, 5):
                 grid.helper_executor((xx, yy), ".")
         layer = ServiceObjectCommon()
-        layer.items[(2, 2)] = object()
-        layer.monsters[(3, 3)] = object()
+        layer.helper[(2, 2)] = object()
+        layer.factory[(3, 3)] = object()
         rng = random.Random(2)
         for _ in range(20):
-            cell = layer.business_arolla(grid, rng, fallback=(1, 1))
+            cell = layer.business_arolla(grid, rng, (), (1, 1))
             self.assertNotIn(cell, ((2, 2), (3, 3)))
 
     def test_random_free_cell_falls_back_when_no_cell_is_free(self):
         grid = UtilsCommonExecutor(4, 4)
         layer = ServiceObjectCommon()
-        cell = layer.business_arolla(grid, random.Random(1), fallback=(1, 1))
+        cell = layer.business_arolla(grid, random.Random(1), (), (1, 1))
         self.assertEqual(cell, (1, 1))
 
     def test_to_dict_and_from_dict_round_trip(self):
         layer = ServiceObjectCommon()
-        layer.traps[(2, 3)] = ImplProcessorDefault("alarm", found=True)
-        layer.explored.add((1, 1))
+        layer.impl[(2, 3)] = ImplProcessorDefault("alarm", True)
+        layer.service.add((1, 1))
         clone = ServiceObjectCommon.dummy_manager(layer.executor_arolla())
         self.assertEqual(clone.executor_arolla(), layer.executor_arolla())
 
 
 class TestLevelAccessors(unittest.TestCase):
-    """Tests for the level delegation accessors."""
-
     def test_tile_accessors_delegate_to_the_grid(self):
         level = ManagerBusinessArolla(10, 10, 1)
         self.assertTrue(level.factory_default((-1, 0)))
@@ -173,74 +160,81 @@ class TestLevelAccessors(unittest.TestCase):
 
 
 class TestGeneration(unittest.TestCase):
-    """Tests for the seeded level generator."""
-
     def test_same_seed_generates_identical_level(self):
-        first = data_service(random.Random(42), 1)
-        second = data_service(random.Random(42), 1)
+        config = utils_common()
+        first = data_service(config, random.Random(42), 1)
+        second = data_service(config, random.Random(42), 1)
         self.assertEqual(first.executor_arolla(), second.executor_arolla())
 
     def test_different_seeds_generate_different_levels(self):
-        first = data_service(random.Random(1), 1)
-        second = data_service(random.Random(2), 1)
+        config = utils_common()
+        first = data_service(config, random.Random(1), 1)
+        second = data_service(config, random.Random(2), 1)
         self.assertNotEqual(first.executor_arolla(), second.executor_arolla())
 
-    def test_generates_at_least_ten_rooms_per_level(self):
+    def test_generates_at_least_the_configured_minimum_of_rooms(self):
+        config = utils_common()
         for seed in range(20):
-            level = data_service(random.Random(seed), 2)
-            self.assertGreaterEqual(len(level.rooms), EXECUTOR_AROLLA)
+            level = data_service(config, random.Random(seed), 2)
+            self.assertGreaterEqual(len(level.manager), config.helper.factory)
 
     def test_rooms_never_overlap(self):
+        config = utils_common()
         for seed in range(20):
-            level = data_service(random.Random(seed), 3)
-            for index, room in enumerate(level.rooms):
-                for other in level.rooms[index + 1 :]:
+            level = data_service(config, random.Random(seed), 3)
+            for index, room in enumerate(level.manager):
+                for other in level.manager[index + 1:]:
                     self.assertFalse(room.impl_builder(other))
 
     def test_all_rooms_and_stairs_are_connected(self):
+        config = utils_common()
         for seed in range(10):
-            level = data_service(random.Random(seed), 1)
-            seen = processor_service(level, level.rooms[0].utils_common)
-            for room in level.rooms:
+            level = data_service(config, random.Random(seed), 1)
+            seen = processor_service(level, level.manager[0].utils_common)
+            for room in level.manager:
                 self.assertIn(room.utils_common, seen)
-            if level.stairs_down:
-                self.assertIn(level.stairs_down, seen)
-            if level.stairs_up:
-                self.assertIn(level.stairs_up, seen)
+            if level.processor:
+                self.assertIn(level.processor, seen)
+            if level.utils:
+                self.assertIn(level.utils, seen)
 
     def test_doors_are_placed_on_room_borders(self):
-        level = data_service(random.Random(9), 1)
+        config = utils_common()
+        level = data_service(config, random.Random(9), 1)
         doors = [
             (xx, yy)
-            for yy in range(level.grid.height)
-            for xx in range(level.grid.width)
+            for yy in range(level.executor.default)
+            for xx in range(level.executor.common)
             if level.utils_data((xx, yy)) == "+"
         ]
         self.assertTrue(doors)
 
     def test_stairs_placement_depends_on_depth(self):
-        first = data_service(random.Random(7), 1)
-        self.assertIsNotNone(first.stairs_up)
-        self.assertIsNotNone(first.stairs_down)
-        middle = data_service(random.Random(7), 3)
-        self.assertIsNone(middle.stairs_up)
-        self.assertIsNotNone(middle.stairs_down)
-        last = data_service(random.Random(7), DUMMY_MANAGER)
-        self.assertIsNone(last.stairs_down)
+        config = utils_common()
+        first = data_service(config, random.Random(7), 1)
+        self.assertIsNotNone(first.utils)
+        self.assertIsNotNone(first.processor)
+        middle = data_service(config, random.Random(7), 3)
+        self.assertIsNone(middle.utils)
+        self.assertIsNotNone(middle.processor)
+        last = data_service(config, random.Random(7), config.helper.data)
+        self.assertIsNone(last.processor)
 
     def test_traps_are_hidden_floor_cells_outside_the_start_room(self):
-        level = data_service(random.Random(3), 2)
-        start = level.rooms[0]
-        self.assertTrue(level.entities.traps)
-        for pos, trap in level.entities.traps.items():
+        config = utils_common()
+        level = data_service(config, random.Random(3), 2)
+        start = level.manager[0]
+        self.assertTrue(level.object.impl)
+        for pos, trap in level.object.impl.items():
             self.assertTrue(level.impl_dummy(pos))
             self.assertFalse(start.object_default(pos))
-            self.assertFalse(trap.found)
-            self.assertIn(trap.kind, ImplProcessorDefault.FACTORY_DEFAULT)
+            self.assertFalse(trap.helper)
+            self.assertIn(trap.data, config.processor)
 
     def test_to_dict_and_from_dict_round_trip(self):
-        level = data_service(random.Random(11), 2)
-        level.entities.explored.add(level.rooms[0].utils_common)
+        config = utils_common()
+        level = data_service(config, random.Random(11), 2)
+        level.object.service.add(level.manager[0].utils_common)
         clone = ManagerBusinessArolla.dummy_manager(level.executor_arolla())
         self.assertEqual(clone.executor_arolla(), level.executor_arolla())
 

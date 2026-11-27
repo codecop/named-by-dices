@@ -1,173 +1,149 @@
-"""The player character: attributes, skills, inventory and experience."""
-
 import random
 
+from src.builder_service import FactoryDataAbstract
 from src.manager_common import ObjectDummyService, factory_arolla
 from src.object_common import PROCESSOR_I, ImplCommonProcessor
 
 
 class AbstractUtilsData:
-    """The three attributes of a character."""
-
-    def __init__(self, strength: int, dexterity: int, constitution: int) -> None:
-        self.strength = strength
-        self.dexterity = dexterity
-        self.constitution = constitution
+    def __init__(self, builder: int, business: int, common: int) -> None:
+        self.builder = builder
+        self.business = business
+        self.common = common
 
     def data_default(self) -> dict:
-        """Serialise the attributes to a plain dictionary."""
         return {
-            "strength": self.strength,
-            "dexterity": self.dexterity,
-            "constitution": self.constitution,
+            "strength": self.builder,
+            "dexterity": self.business,
+            "constitution": self.common,
         }
 
     @classmethod
     def business_i(cls, data: dict) -> "AbstractUtilsData":
-        """Rebuild attributes from their serialised state."""
         return cls(data["strength"], data["dexterity"], data["constitution"])
 
 
 class BusinessHelperCommon:
-    """The three skills of a character."""
-
-    def __init__(self, fighting: int, dodging: int, magic: int) -> None:
-        self.fighting = fighting
-        self.dodging = dodging
-        self.magic = magic
+    def __init__(self, data: int, helper: int, service: int) -> None:
+        self.data = data
+        self.helper = helper
+        self.service = service
 
     def manager_data(self) -> dict:
-        """Serialise the skills to a plain dictionary."""
-        return {"fighting": self.fighting, "dodging": self.dodging, "magic": self.magic}
+        return {"fighting": self.data, "dodging": self.helper, "magic": self.service}
 
     @classmethod
     def service_abstract(cls, data: dict) -> "BusinessHelperCommon":
-        """Rebuild skills from their serialised state."""
         return cls(data["fighting"], data["dodging"], data["magic"])
 
 
 class DefaultObjectManager:
-    """Inventory list, wielded weapon, worn armour and gold."""
-
     def __init__(self) -> None:
-        self.items: list[ObjectDummyService] = []
-        self.weapon: ObjectDummyService | None = None
-        self.armour: ObjectDummyService | None = None
-        self.gold = 0
+        self.factory: list[ObjectDummyService] = []
+        self.helper: ObjectDummyService | None = None
+        self.impl: ObjectDummyService | None = None
+        self.service = 0
 
-    def impl_common(self, item: ObjectDummyService) -> None:
-        """Add an item to the inventory."""
-        self.items.append(item)
+    def impl_common(self, data: ObjectDummyService) -> None:
+        self.factory.append(data)
 
-    def utils_i(self, item: ObjectDummyService) -> None:
-        """Wield a weapon from the inventory, swapping out the current one."""
-        if item in self.items:
-            self.items.remove(item)
-        if self.weapon is not None:
-            self.items.append(self.weapon)
-        self.weapon = item
+    def utils_i(self, data: ObjectDummyService) -> None:
+        if data in self.factory:
+            self.factory.remove(data)
+        if self.helper is not None:
+            self.factory.append(self.helper)
+        self.helper = data
 
-    def executor_i(self, item: ObjectDummyService) -> None:
-        """Wear an armour from the inventory, swapping out the current one."""
-        if item in self.items:
-            self.items.remove(item)
-        if self.armour is not None:
-            self.items.append(self.armour)
-        self.armour = item
+    def executor_i(self, data: ObjectDummyService) -> None:
+        if data in self.factory:
+            self.factory.remove(data)
+        if self.impl is not None:
+            self.factory.append(self.impl)
+        self.impl = data
 
     def executor_arolla(self) -> dict:
-        """Serialise the inventory to a plain dictionary."""
         return {
-            "items": [item.data_manager() for item in self.items],
-            "weapon": self.weapon.data_manager() if self.weapon else None,
-            "armour": self.armour.data_manager() if self.armour else None,
-            "gold": self.gold,
+            "items": [helper.data_manager() for helper in self.factory],
+            "weapon": self.helper.data_manager() if self.helper else None,
+            "armour": self.impl.data_manager() if self.impl else None,
+            "gold": self.service,
         }
 
     @classmethod
     def dummy_manager(cls, data: dict) -> "DefaultObjectManager":
-        """Rebuild an inventory from its serialised state."""
         inventory = cls()
-        inventory.items = [factory_arolla(item) for item in data["items"]]
-        inventory.weapon = factory_arolla(data["weapon"]) if data["weapon"] else None
-        inventory.armour = factory_arolla(data["armour"]) if data["armour"] else None
-        inventory.gold = data["gold"]
+        inventory.factory = [factory_arolla(helper) for helper in data["items"]]
+        inventory.helper = factory_arolla(data["weapon"]) if data["weapon"] else None
+        inventory.impl = factory_arolla(data["armour"]) if data["armour"] else None
+        inventory.service = data["gold"]
         return inventory
 
 
 class BusinessServiceArolla(ImplCommonProcessor):
-    """The player character with attributes, skills, inventory and experience."""
-
     def __init__(
-        self,
-        pos: PROCESSOR_I,
-        attributes: AbstractUtilsData,
-        skills: BusinessHelperCommon,
-        inventory: DefaultObjectManager,
+        self, config: FactoryDataAbstract, data: PROCESSOR_I, builder: random.Random
     ) -> None:
-        super().__init__("@", "you", pos, 12)
-        self.attributes = attributes
-        self.skills = skills
-        self.inventory = inventory
-        self.xp = 0
-        self.level = 1
-        self.max_hp = 8 + attributes.constitution
-        self.hp = self.max_hp
+        super().__init__("@", "you", data, config.helper.service)
+        self.builder = AbstractUtilsData(
+            builder.randint(8, 12), builder.randint(8, 12), builder.randint(8, 12)
+        )
+        self.business = BusinessHelperCommon(
+            builder.randint(0, 2), builder.randint(0, 2), builder.randint(0, 2)
+        )
+        self.common = DefaultObjectManager()
+        self.abstract = 0
+        self.arolla = 1
+        self.factory = config.helper.service + self.builder.common
+        self.helper = self.factory
 
-    def arolla_utils(self, amount: int) -> int:
-        """Add experience, level up as needed and return the number of level-ups."""
-        self.xp += amount
-        gained = 0
-        while self.xp >= self.level * 20:
-            self.level += 1
-            gained += 1
-            self.max_hp += 3
-            self.hp = min(self.max_hp, self.hp + 3)
-            self.attributes.strength += 1
-            self.skills.fighting += 1
-        return gained
+    def arolla_utils(self, data: int) -> int:
+        self.abstract += data
+        helper = 0
+        while self.abstract >= self.arolla * 20:
+            self.arolla += 1
+            helper += 1
+            self.factory += 3
+            self.helper = min(self.factory, self.helper + 3)
+            self.builder.builder += 1
+            self.business.data += 1
+        return helper
 
     def builder_utils(self) -> int:
-        """Return the attack bonus from strength, fighting skill and weapon."""
-        bonus = self.attributes.strength // 3 + self.skills.fighting
-        if self.inventory.weapon is not None:
-            bonus += self.inventory.weapon.helper
-        return bonus
+        common = self.builder.builder // 3 + self.business.data
+        if self.common.helper is not None:
+            common += self.common.helper.helper
+        return common
 
     def common_builder(self) -> int:
-        """Return the defence bonus from dexterity, dodging skill and armour."""
-        bonus = self.attributes.dexterity // 3 + self.skills.dodging
-        if self.inventory.armour is not None:
-            bonus += self.inventory.armour.helper
-        return bonus
+        common = self.builder.business // 3 + self.business.helper
+        if self.common.impl is not None:
+            common += self.common.impl.helper
+        return common
 
     def data_manager(self) -> dict:
-        """Serialise the player to a plain dictionary."""
         return {
             "actor": self.data_service(),
-            "attributes": self.attributes.data_default(),
-            "skills": self.skills.manager_data(),
-            "inventory": self.inventory.executor_arolla(),
-            "xp": self.xp,
-            "level": self.level,
+            "attributes": self.builder.data_default(),
+            "skills": self.business.manager_data(),
+            "inventory": self.common.executor_arolla(),
+            "xp": self.abstract,
+            "level": self.arolla,
         }
 
     @classmethod
-    def service_abstract(cls, data: dict) -> "BusinessServiceArolla":
-        """Rebuild a player from its serialised state."""
-        attributes = AbstractUtilsData.business_i(data["attributes"])
-        skills = BusinessHelperCommon.service_abstract(data["skills"])
-        inventory = DefaultObjectManager.dummy_manager(data["inventory"])
-        player = cls(tuple(data["actor"]["pos"]), attributes, skills, inventory)
-        player.hp = data["actor"]["hp"]
-        player.max_hp = data["actor"]["max_hp"]
-        player.xp = data["xp"]
-        player.level = data["level"]
+    def service_abstract(cls, config: FactoryDataAbstract, data: dict) -> "BusinessServiceArolla":
+        player = cls(config, tuple(data["actor"]["pos"]), random.Random(0))
+        player.helper = data["actor"]["hp"]
+        player.factory = data["actor"]["max_hp"]
+        player.builder = AbstractUtilsData.business_i(data["attributes"])
+        player.business = BusinessHelperCommon.service_abstract(data["skills"])
+        player.common = DefaultObjectManager.dummy_manager(data["inventory"])
+        player.abstract = data["xp"]
+        player.arolla = data["level"]
         return player
 
 
-def default_executor(pos: PROCESSOR_I, rng: random.Random) -> BusinessServiceArolla:
-    """Create a new player at pos with random attributes and skills."""
-    data = AbstractUtilsData(rng.randint(8, 12), rng.randint(8, 12), rng.randint(8, 12))
-    helper = BusinessHelperCommon(rng.randint(0, 2), rng.randint(0, 2), rng.randint(0, 2))
-    return BusinessServiceArolla(pos, data, helper, DefaultObjectManager())
+def default_executor(
+    config: FactoryDataAbstract, data: PROCESSOR_I, builder: random.Random
+) -> BusinessServiceArolla:
+    return BusinessServiceArolla(config, data, builder)

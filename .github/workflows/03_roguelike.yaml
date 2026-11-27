@@ -30,20 +30,20 @@ jobs:
 
     - name: Lint with flake8
       working-directory: 03_roguelike
-      run: flake8 src
+      run: flake8 src test
 
     - name: Lint with pylint
       working-directory: 03_roguelike
-      run: PYTHONPATH=. pylint src
+      run: PYTHONPATH=. pylint src test
 
     - name: Test
       working-directory: 03_roguelike
-      run: python3 -m unittest discover -s src/test -t . -p '*_test.py'
+      run: python3 -m unittest discover -s test -t . -p '*_test.py'
 
     - name: Coverage
       working-directory: 03_roguelike
       run: |
-        coverage run -m unittest discover -s src/test -t . -p '*_test.py'
+        coverage run -m unittest discover -s test -t . -p '*_test.py'
         coverage report -m
         coverage html -d docs/coverage-report
 

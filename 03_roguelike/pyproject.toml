@@ -11,12 +11,11 @@ requires-python = ">=3.13"
 license = { text = "MIT" }
 
 [tool.setuptools]
-packages = ["src", "src.test"]
+packages = ["src"]
 
 [tool.coverage.run]
 branch = true
 source = ["src"]
-omit = ["src/test/*"]
 
 [tool.coverage.report]
 show_missing = true
