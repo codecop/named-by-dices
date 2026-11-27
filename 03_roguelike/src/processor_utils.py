@@ -93,7 +93,9 @@ def arolla_executor(
 ) -> PROCESSOR_I:
     occupied = set(level.object.factory) | set(level.object.helper)
     occupied.discard(monster.data)
-    if can_see and i_data(monster.data, helper) > 1:
+    if can_see:
+        if i_data(monster.data, helper) == 1:
+            return helper
         data = service_dummy(monster.data, helper)
         if level.impl_dummy(data) and data not in occupied:
             return data

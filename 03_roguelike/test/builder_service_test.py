@@ -65,8 +65,25 @@ class TestParseConfig(unittest.TestCase):
             abstract_business("monster r rat 3\n")
 
     def test_unknown_setting_raises(self):
+        with self.assertRaises(ValueError) as ctx:
+            abstract_business("setting colour 5\n")
+        self.assertIn("unknown setting", str(ctx.exception))
+
+    def test_setting_with_wrong_arg_count_raises(self):
         with self.assertRaises(ValueError):
-            abstract_business("setting colour blue\n")
+            abstract_business("setting width\n")
+
+    def test_short_npc_line_raises(self):
+        with self.assertRaises(ValueError):
+            abstract_business("npc H\n")
+
+    def test_short_item_line_raises(self):
+        with self.assertRaises(ValueError):
+            abstract_business("item weapon )\n")
+
+    def test_trap_with_extra_word_raises(self):
+        with self.assertRaises(ValueError):
+            abstract_business("trap dart now\n")
 
 
 class TestLoadConfig(unittest.TestCase):

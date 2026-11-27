@@ -2,14 +2,17 @@ import random
 import unittest
 from pathlib import Path
 
-from src.builder_service import business_utils
+from src.builder_service import abstract_business, business_utils
 from src.data_common import (
     ArollaImplData,
     ImplProcessorDefault,
     ManagerBusinessArolla,
     ServiceObjectCommon,
     UtilsCommonExecutor,
+    common_helper,
     data_service,
+    processor_manager,
+    utils_executor,
 )
 from src.object_common import builder_default
 
@@ -215,9 +218,10 @@ class TestGeneration(unittest.TestCase):
         self.assertIsNotNone(first.utils)
         self.assertIsNotNone(first.processor)
         middle = data_service(config, random.Random(7), 3)
-        self.assertIsNone(middle.utils)
+        self.assertIsNotNone(middle.utils)
         self.assertIsNotNone(middle.processor)
         last = data_service(config, random.Random(7), config.helper.data)
+        self.assertIsNotNone(last.utils)
         self.assertIsNone(last.processor)
 
     def test_traps_are_hidden_floor_cells_outside_the_start_room(self):
@@ -237,6 +241,52 @@ class TestGeneration(unittest.TestCase):
         level.object.service.add(level.manager[0].utils_common)
         clone = ManagerBusinessArolla.dummy_manager(level.executor_arolla())
         self.assertEqual(clone.executor_arolla(), level.executor_arolla())
+
+
+class TestEdgeCases(unittest.TestCase):
+    def test_common_helper_skips_wall_border_cells(self):
+        level = ManagerBusinessArolla(10, 10, 1)
+        level.manager.append(ArollaImplData(1, 1, 4, 4))
+        common_helper(level)
+        self.assertEqual(level.utils_data((1, 1)), "#")
+
+    def test_processor_manager_guard_avoids_the_stairs_up_cell(self):
+        config = utils_common()
+        level = ManagerBusinessArolla(20, 10, 1)
+        level.manager.append(ArollaImplData(1, 1, 3, 3))
+        level.manager.append(ArollaImplData(1, 1, 3, 3))
+        processor_manager(config, level, random.Random(0))
+        self.assertIsNotNone(level.utils)
+        self.assertIsNotNone(level.processor)
+
+    def test_utils_executor_without_trap_kinds_places_nothing(self):
+        config = abstract_business(
+            "setting width 30\nsetting height 12\nsetting min_rooms 2\nsetting max_rooms 2\n"
+        )
+        level = data_service(config, random.Random(1), 1)
+        level.object.impl.clear()
+        utils_executor(config, level, random.Random(1))
+        self.assertFalse(level.object.impl)
+
+    def test_utils_executor_skips_start_room_and_existing_traps(self):
+        config = utils_common()
+        level = ManagerBusinessArolla(8, 8, 1)
+        level.manager.append(ArollaImplData(1, 1, 2, 2))
+        for yy in range(1, 7):
+            for xx in range(1, 7):
+                level.helper_executor((xx, yy), ".")
+                if not level.manager[0].object_default((xx, yy)):
+                    level.object.impl[(xx, yy)] = ImplProcessorDefault("dart")
+        before = len(level.object.impl)
+        utils_executor(config, level, random.Random(2))
+        self.assertEqual(len(level.object.impl), before)
+
+    def test_tiny_map_exhausts_room_placement_attempts(self):
+        config = abstract_business(
+            "setting width 20\nsetting height 14\nsetting min_rooms 40\nsetting max_rooms 40\n"
+        )
+        level = data_service(config, random.Random(1), 1)
+        self.assertLess(len(level.manager), 40)
 
 
 if __name__ == "__main__":

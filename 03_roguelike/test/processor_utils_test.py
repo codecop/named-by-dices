@@ -90,6 +90,12 @@ class TestChooseMove(unittest.TestCase):
         step = arolla_executor(random.Random(1), level, monster, (5, 1), True)
         self.assertEqual(step, (5, 4))
 
+    def test_adjacent_seen_target_is_attacked(self):
+        level = self.open_level()
+        monster = object_factory(level, "r", (5, 5))
+        step = arolla_executor(random.Random(1), level, monster, (5, 4), True)
+        self.assertEqual(step, (5, 4))
+
     def test_wall_blocks_the_chase(self):
         level = self.open_level()
         level.helper_executor((5, 4), "#")

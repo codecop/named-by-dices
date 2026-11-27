@@ -39,6 +39,10 @@ def arolla_utils(
             max(0, origin[0] - data), min(executor.common, origin[0] + data + 1)
         ):
             common = (service, helper)
-            if i_data(origin, common) <= data and builder_utils(executor, origin, common):
+            if (
+                i_data(origin, common) <= data
+                and not executor.factory_default(common)
+                and builder_utils(executor, origin, common)
+            ):
                 impl.add(common)
     return impl

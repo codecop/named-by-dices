@@ -287,9 +287,8 @@ def processor_manager(
     config: FactoryDataAbstract, level: ManagerBusinessArolla, builder: random.Random
 ) -> None:
     helper = level.manager[0]
-    if level.data == 1:
-        level.utils = helper.processor_factory(builder)
-        level.helper_executor(level.utils, "<")
+    level.utils = helper.processor_factory(builder)
+    level.helper_executor(level.utils, "<")
     if level.data < config.helper.data:
         service = builder.choice(level.manager[1:])
         data = service.processor_factory(builder)

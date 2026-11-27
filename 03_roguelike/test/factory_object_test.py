@@ -1,3 +1,5 @@
+import importlib
+import sys
 import unittest
 from unittest import mock
 
@@ -68,6 +70,20 @@ class TestGetch(unittest.TestCase):
         termios_mock.tcsetattr.assert_called_once_with(
             5, termios_mock.TCSADRAIN, "old"
         )
+
+
+class TestImportFallbacks(unittest.TestCase):
+    def test_module_reloads_when_termios_and_msvcrt_are_missing(self):
+        with mock.patch.dict(
+            sys.modules, {"termios": None, "tty": None, "msvcrt": None}
+        ):
+            importlib.reload(factory_object)
+            self.assertIsNone(factory_object.termios)
+            self.assertIsNone(factory_object.tty)
+            self.assertIsNone(factory_object.msvcrt)
+        importlib.reload(factory_object)
+        self.assertIsNotNone(factory_object.termios)
+        self.assertIsNotNone(factory_object.tty)
 
 
 if __name__ == "__main__":
