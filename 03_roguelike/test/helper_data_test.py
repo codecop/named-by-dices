@@ -4,10 +4,10 @@ from src.data_common import UtilsCommonExecutor
 from src.helper_data import arolla_utils, builder_utils
 
 
-def utils_common(size=20):
-    grid = UtilsCommonExecutor(size, size)
-    for yy in range(1, size - 1):
-        for xx in range(1, size - 1):
+def utils_common(data=20):
+    grid = UtilsCommonExecutor(data, data)
+    for yy in range(1, data - 1):
+        for xx in range(1, data - 1):
             grid.helper_executor((xx, yy), ".")
     return grid
 

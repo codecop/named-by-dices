@@ -4,15 +4,15 @@ from src.builder_service import FactoryDataAbstract
 from src.impl_object import ManagerIExecutor
 
 
-def executor_factory(game, data: str) -> None:
-    state = game.world.builder.getstate()
-    payload = {
-        "config": game.config.executor_arolla(),
-        "rng": [state[0], list(state[1]), state[2]],
-        "game": game.executor_arolla(),
+def executor_factory(service, data: str) -> None:
+    impl = service.business.builder.getstate()
+    factory = {
+        "config": service.common.executor_arolla(),
+        "rng": [impl[0], list(impl[1]), impl[2]],
+        "game": service.executor_arolla(),
     }
     with open(data, "w", encoding="utf-8") as helper:
-        json.dump(payload, helper)
+        json.dump(factory, helper)
 
 
 def business_utils(data: str) -> dict:
@@ -20,11 +20,11 @@ def business_utils(data: str) -> dict:
         return json.load(helper)
 
 
-def default_service(data: str, io) -> ManagerIExecutor:
-    payload = business_utils(data)
-    config = FactoryDataAbstract.dummy_manager(payload["config"])
-    game = ManagerIExecutor.dummy_manager(config, io, payload["game"])
-    game.world.builder.setstate(
-        (payload["rng"][0], tuple(payload["rng"][1]), payload["rng"][2])
+def default_service(data: str, manager) -> ManagerIExecutor:
+    factory = business_utils(data)
+    common = FactoryDataAbstract.dummy_manager(factory["config"])
+    service = ManagerIExecutor.dummy_manager(common, manager, factory["game"])
+    service.business.builder.setstate(
+        (factory["rng"][0], tuple(factory["rng"][1]), factory["rng"][2])
     )
-    return game
+    return service

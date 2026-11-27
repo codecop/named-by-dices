@@ -33,13 +33,13 @@ class ObjectDummyService:
 
 
 def executor_factory(
-    config: FactoryDataAbstract, builder: random.Random, data: int
+    common: FactoryDataAbstract, builder: random.Random, data: int
 ) -> ObjectDummyService:
     dummy = []
-    for service in config.object:
+    for service in common.object:
         dummy.extend([service] * (2 if service in ("potion", "gold") else 1))
     service = builder.choice(dummy)
-    helper, impl, utils = builder.choice(config.object[service])
+    helper, impl, utils = builder.choice(common.object[service])
     if service in ("weapon", "armour"):
         utils += data // 2
     elif service == "gold":
@@ -52,6 +52,6 @@ def factory_arolla(data: dict) -> ObjectDummyService:
     return ObjectDummyService.service_abstract(data)
 
 
-def object_arolla(config: FactoryDataAbstract) -> ObjectDummyService:
-    helper, impl, utils = config.object["artefact"][0]
+def object_arolla(common: FactoryDataAbstract) -> ObjectDummyService:
+    helper, impl, utils = common.object["artefact"][0]
     return ObjectDummyService(helper, impl, "artefact", utils)

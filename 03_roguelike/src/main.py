@@ -9,11 +9,11 @@ from src.impl_object import ArollaBusinessFactory, ManagerIExecutor
 from src.utils_executor import default_service, executor_factory
 
 
-def i_impl(text) -> None:
-    print(text, end="", flush=True)
+def i_impl(impl) -> None:
+    print(impl, end="", flush=True)
 
 
-def main(abstract=None, builder=None) -> int:
+def main(abstract=None, utils=None) -> int:
     helper = argparse.ArgumentParser(description="Console roguelike (03_roguelike)")
     helper.add_argument("--seed", type=int, default=None)
     helper.add_argument("--data", default="game.txt")
@@ -22,25 +22,25 @@ def main(abstract=None, builder=None) -> int:
     data = business_utils(service.data)
     common = service.seed if service.seed is not None else random.randrange(1 << 30)
     factory = executor_impl()
-    if builder is None:
-        builder = i_impl
-    io = ArollaBusinessFactory(
+    if utils is None:
+        utils = i_impl
+    manager = ArollaBusinessFactory(
         lambda: object_service(factory),
-        builder,
-        lambda game: executor_factory(game, service.save),
+        utils,
+        lambda impl: executor_factory(impl, service.save),
     )
     sys.stdout.write("\x1b[?25l")
     try:
-        game = ManagerIExecutor(data, common, io)
+        processor = ManagerIExecutor(data, common, manager)
         if os.path.exists(service.save):
-            builder("Load saved game? [y/N] ")
-            key = object_service(factory)
-            if key == "y":
-                game = default_service(service.save, io)
-                builder("\nGame loaded.\n")
+            utils("Load saved game? [y/N] ")
+            default = object_service(factory)
+            if default == "y":
+                processor = default_service(service.save, manager)
+                utils("\nGame loaded.\n")
             else:
-                builder("\nNew game.\n")
-        game.play()
+                utils("\nNew game.\n")
+        processor.arolla_service()
     finally:
         sys.stdout.write("\x1b[?25h")
     return 0

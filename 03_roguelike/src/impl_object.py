@@ -58,37 +58,37 @@ class ObjectUtilsI:
 
     @classmethod
     def dummy_manager(cls, data: dict) -> "ObjectUtilsI":
-        status = cls()
-        status.data = data["over"]
-        status.helper = data["won"]
-        status.service = data["message"]
-        return status
+        abstract = cls()
+        abstract.data = data["over"]
+        abstract.helper = data["won"]
+        abstract.service = data["message"]
+        return abstract
 
 
 class DefaultFactoryData:
-    def __init__(self, config: FactoryDataAbstract, data: int) -> None:
+    def __init__(self, common: FactoryDataAbstract, data: int) -> None:
         self.builder = random.Random(data)
         self.factory: dict[int, ManagerBusinessArolla] = {}
         self.data = 1
-        self.i_impl(config, 1)
+        self.i_impl(common, 1)
 
     def helper_i(self) -> ManagerBusinessArolla:
         return self.factory[self.data]
 
-    def i_impl(self, config: FactoryDataAbstract, data: int) -> None:
+    def i_impl(self, common: FactoryDataAbstract, data: int) -> None:
         self.data = data
         if data not in self.factory:
-            level = data_service(config, self.builder, data)
-            default_service(config, level, self.builder, data)
-            self.factory[data] = level
+            helper = data_service(common, self.builder, data)
+            default_service(common, helper, self.builder, data)
+            self.factory[data] = helper
 
-    def manager_object(self, level: ManagerBusinessArolla) -> dict:
+    def manager_object(self, helper: ManagerBusinessArolla) -> dict:
         return {
-            **level.executor_arolla(),
-            "monsters": [m.executor_common() for m in level.object.factory.values()],
+            **helper.executor_arolla(),
+            "monsters": [manager.executor_common() for manager in helper.object.factory.values()],
             "items": [
-                {"pos": list(pos), "item": item.data_manager()}
-                for pos, item in level.object.helper.items()
+                {"pos": list(data), "item": impl.data_manager()}
+                for data, impl in helper.object.helper.items()
             ],
         }
 
@@ -96,47 +96,47 @@ class DefaultFactoryData:
         return {
             "depth": self.data,
             "levels": {
-                str(depth): self.manager_object(level)
-                for depth, level in self.factory.items()
+                str(data): self.manager_object(helper)
+                for data, helper in self.factory.items()
             },
         }
 
     @classmethod
-    def dummy_manager(cls, config: FactoryDataAbstract, data: dict) -> "DefaultFactoryData":
-        world = cls(config, 0)
-        world.factory = {}
-        for key, level_data in data["levels"].items():
-            level = ManagerBusinessArolla.dummy_manager(level_data)
-            level.object.factory = {
-                tuple(m["pos"]): dummy_processor(m) for m in level_data["monsters"]
+    def dummy_manager(cls, common: FactoryDataAbstract, dummy: dict) -> "DefaultFactoryData":
+        business = cls(common, 0)
+        business.factory = {}
+        for data, utils in dummy["levels"].items():
+            helper = ManagerBusinessArolla.dummy_manager(utils)
+            helper.object.factory = {
+                tuple(impl["pos"]): dummy_processor(impl) for impl in utils["monsters"]
             }
-            level.object.helper = {
-                tuple(i["pos"]): factory_arolla(i["item"]) for i in level_data["items"]
+            helper.object.helper = {
+                tuple(impl["pos"]): factory_arolla(impl["item"]) for impl in utils["items"]
             }
-            world.factory[int(key)] = level
-        world.data = data["depth"]
-        return world
+            business.factory[int(data)] = helper
+        business.data = dummy["depth"]
+        return business
 
 
 class ManagerIExecutor:
-    def __init__(self, config: FactoryDataAbstract, data: int, io) -> None:
-        self.config = config
-        self.world = DefaultFactoryData(config, data)
-        self.io = io
-        self.visible = set()
-        self.status = ObjectUtilsI()
-        self.player = default_executor(
-            config, self.world.helper_i().manager[0].utils_common, self.world.builder
+    def __init__(self, common: FactoryDataAbstract, data: int, utils) -> None:
+        self.common = common
+        self.business = DefaultFactoryData(common, data)
+        self.utils = utils
+        self.executor = set()
+        self.abstract = ObjectUtilsI()
+        self.factory = default_executor(
+            common, self.business.helper_i().manager[0].utils_common, self.business.builder
         )
 
-    def play(self) -> None:
-        while not self.status.data:
-            self.io.i_object(utils_default(self))
-            key = object_service(self.io.i_impl)
-            self.handle(key)
+    def arolla_service(self) -> None:
+        while not self.abstract.data:
+            self.utils.i_object(utils_default(self))
+            default = object_service(self.utils.i_impl)
+            self.helper_executor(default)
 
-    def handle(self, data: str) -> None:
-        turn = True
+    def helper_executor(self, data: str) -> None:
+        processor = True
         if data in UTILS_DEFAULT:
             self.i_impl(UTILS_DEFAULT[data])
         elif data == ".":
@@ -144,22 +144,22 @@ class ManagerIExecutor:
         elif data in (">", "<", ",", "q", "r", "z", "w", "W"):
             self.i_business(data)
         elif data == "i":
-            self.status.service = self.common_manager()
-            turn = False
+            self.abstract.service = self.common_manager()
+            processor = False
         elif data == "s":
-            self.io.impl(self)
-            self.status.service = "Game saved."
-            turn = False
+            self.utils.impl(self)
+            self.abstract.service = "Game saved."
+            processor = False
         elif data in ("Q", ""):
-            self.status.data = True
-            turn = False
+            self.abstract.data = True
+            processor = False
         elif data == "?":
-            self.status.service = DUMMY_UTILS
-            turn = False
+            self.abstract.service = DUMMY_UTILS
+            processor = False
         else:
-            self.status.service = f"Unknown key {data!r}"
-            turn = False
-        if turn:
+            self.abstract.service = f"Unknown key {data!r}"
+            processor = False
+        if processor:
             i_builder(self)
 
     def i_business(self, data: str) -> None:
@@ -181,317 +181,321 @@ class ManagerIExecutor:
             self.arolla_utils()
 
     def i_impl(self, data: tuple) -> None:
-        level = self.world.helper_i()
-        helper = (self.player.data[0] + data[0], self.player.data[1] + data[1])
-        if not level.impl_dummy(helper):
-            self.status.service = "A wall."
+        helper = self.business.helper_i()
+        impl = (self.factory.data[0] + data[0], self.factory.data[1] + data[1])
+        if not helper.impl_dummy(impl):
+            self.abstract.service = "A wall."
             return
-        monster = level.object.factory.get(helper)
-        if monster is not None:
-            if monster.processor:
-                self.i_utils(monster)
+        manager = helper.object.factory.get(impl)
+        if manager is not None:
+            if manager.processor:
+                self.i_utils(manager)
             else:
-                processor_dummy(self, monster)
+                processor_dummy(self, manager)
             return
-        self.player.data = helper
-        trap = level.object.impl.get(helper)
-        if trap is not None and not trap.helper:
-            service_arolla(self, trap)
+        self.factory.data = impl
+        service = helper.object.impl.get(impl)
+        if service is not None and not service.helper:
+            service_arolla(self, service)
 
-    def i_utils(self, monster) -> None:
-        if monster.utils:
-            self.status.service = "The hermit: 'The Golden Die lies below the dragon.'"
+    def i_utils(self, manager) -> None:
+        if manager.utils:
+            self.abstract.service = "The hermit: 'The Golden Die lies below the dragon.'"
         else:
-            monster.utils = True
-            self.player.helper = self.player.factory
-            self.status.service = "The hermit heals you completely!"
+            manager.utils = True
+            self.factory.helper = self.factory.factory
+            self.abstract.service = "The hermit heals you completely!"
 
     def i_object(self) -> None:
-        level = self.world.helper_i()
-        pos = self.player.data
-        item = level.object.helper.get(pos)
-        if item is None:
-            self.status.service = "Nothing here."
+        helper = self.business.helper_i()
+        data = self.factory.data
+        impl = helper.object.helper.get(data)
+        if impl is None:
+            self.abstract.service = "Nothing here."
             return
-        del level.object.helper[pos]
-        if item.data == "gold":
-            self.player.common.service += item.helper
-            self.status.service = f"You pick up {item.helper} gold."
-        elif item.data == "artefact":
-            self.player.common.impl_common(item)
-            self.status.service = impl_common("amulet")
+        del helper.object.helper[data]
+        if impl.data == "gold":
+            self.factory.common.service += impl.helper
+            self.abstract.service = f"You pick up {impl.helper} gold."
+        elif impl.data == "artefact":
+            self.factory.common.impl_common(impl)
+            self.abstract.service = impl_common("amulet")
         else:
-            self.player.common.impl_common(item)
-            self.status.service = f"You pick up {item.manager_abstract()}."
+            self.factory.common.impl_common(impl)
+            self.abstract.service = f"You pick up {impl.manager_abstract()}."
 
     def common_helper(self, data: str):
-        factory = [item for item in self.player.common.factory if item.data == data]
+        factory = [impl for impl in self.factory.common.factory if impl.data == data]
         if not factory:
-            self.status.service = f"No {data} in your inventory."
+            self.abstract.service = f"No {data} in your inventory."
             return None
         if len(factory) == 1:
             return factory[0]
         helper = ", ".join(
-            f"{chr(97 + service)}: {item.manager_abstract()}"
-            for service, item in enumerate(factory)
+            f"{chr(97 + service)}: {impl.manager_abstract()}"
+            for service, impl in enumerate(factory)
         )
-        self.status.service = f"Use which? {helper}"
-        self.io.i_object(utils_default(self))
-        key = self.io.i_impl()
-        service = ord(key) - 97 if key else -1
+        self.abstract.service = f"Use which? {helper}"
+        self.utils.i_object(utils_default(self))
+        default = self.utils.i_impl()
+        service = ord(default) - 97 if default else -1
         if 0 <= service < len(factory):
             return factory[service]
-        self.status.service = "Never mind."
+        self.abstract.service = "Never mind."
         return None
 
     def utils_data(self) -> None:
-        item = self.common_helper("potion")
-        if item is None:
+        impl = self.common_helper("potion")
+        if impl is None:
             return
-        self.player.common.factory.remove(item)
-        if item.helper > 0:
-            self.player.processor_i(item.helper)
-            self.status.service = f"You quaff {item.manager_abstract()}. +{item.helper} hp."
+        self.factory.common.factory.remove(impl)
+        if impl.helper > 0:
+            self.factory.processor_i(impl.helper)
+            self.abstract.service = f"You quaff {impl.manager_abstract()}. +{impl.helper} hp."
         else:
-            self.player.utils_data(-item.helper)
-            self.status.service = f"You quaff {item.manager_abstract()}. It burns!"
+            self.factory.utils_data(-impl.helper)
+            self.abstract.service = f"You quaff {impl.manager_abstract()}. It burns!"
 
     def processor_i(self) -> None:
-        item = self.common_helper("scroll")
-        if item is None:
+        impl = self.common_helper("scroll")
+        if impl is None:
             return
-        self.player.common.factory.remove(item)
-        i_service(self, item)
+        self.factory.common.factory.remove(impl)
+        i_service(self, impl)
 
     def data_service(self) -> None:
-        item = self.common_helper("wand")
-        if item is None:
+        impl = self.common_helper("wand")
+        if impl is None:
             return
-        if item.factory <= 0:
-            self.status.service = "The wand is drained."
+        if impl.factory <= 0:
+            self.abstract.service = "The wand is drained."
             return
-        self.status.service = "Zap which way? (hjkl)"
-        self.io.i_object(utils_default(self))
-        key = self.io.i_impl()
-        delta = UTILS_DEFAULT.get(key)
-        if delta is None:
-            self.status.service = "Never mind."
+        self.abstract.service = "Zap which way? (hjkl)"
+        self.utils.i_object(utils_default(self))
+        default = self.utils.i_impl()
+        helper = UTILS_DEFAULT.get(default)
+        if helper is None:
+            self.abstract.service = "Never mind."
             return
-        level = self.world.helper_i()
-        pos = self.player.data
-        dmg = 4 + self.player.business.service
+        business = self.business.helper_i()
+        data = self.factory.data
+        factory = 4 + self.factory.business.service
         for dummy in range(20):
-            pos = (pos[0] + delta[0], pos[1] + delta[1])
-            if not level.impl_dummy(pos):
-                self.status.service = "The bolt fizzles into the wall."
+            data = (data[0] + helper[0], data[1] + helper[1])
+            if not business.impl_dummy(data):
+                self.abstract.service = "The bolt fizzles into the wall."
                 break
-            monster = level.object.factory.get(pos)
-            if monster is not None and not monster.processor:
-                dealt = arolla_service(self.world.builder, dmg, monster.executor)
-                monster.utils_data(dealt)
-                if not monster.i_object:
-                    del level.object.factory[pos]
-                    self.player.arolla_utils(monster.object)
-                self.status.service = f"Your bolt hits the {monster.service} for {dealt}."
+            manager = business.object.factory.get(data)
+            if manager is not None and not manager.processor:
+                service = arolla_service(self.business.builder, factory, manager.executor)
+                manager.utils_data(service)
+                if not manager.i_object:
+                    del business.object.factory[data]
+                    self.factory.arolla_utils(manager.object)
+                self.abstract.service = f"Your bolt hits the {manager.service} for {service}."
                 break
-        item.factory -= 1
-        if item.factory <= 0:
-            self.player.common.factory.remove(item)
-            self.status.service += " The wand crumbles to dust."
+        impl.factory -= 1
+        if impl.factory <= 0:
+            self.factory.common.factory.remove(impl)
+            self.abstract.service += " The wand crumbles to dust."
 
     def factory_default(self) -> None:
-        item = self.common_helper("weapon")
-        if item is not None:
-            self.player.common.utils_i(item)
-            self.status.service = f"You wield {item.manager_abstract()}."
+        impl = self.common_helper("weapon")
+        if impl is not None:
+            self.factory.common.utils_i(impl)
+            self.abstract.service = f"You wield {impl.manager_abstract()}."
 
     def arolla_utils(self) -> None:
-        item = self.common_helper("armour")
-        if item is not None:
-            self.player.common.executor_i(item)
-            self.status.service = f"You wear {item.manager_abstract()}."
+        impl = self.common_helper("armour")
+        if impl is not None:
+            self.factory.common.executor_i(impl)
+            self.abstract.service = f"You wear {impl.manager_abstract()}."
 
     def common_manager(self) -> str:
-        parts = [item.manager_abstract() for item in self.player.common.factory]
-        if self.player.common.helper is not None:
-            parts.append("wielding " + self.player.common.helper.manager_abstract())
-        if self.player.common.impl is not None:
-            parts.append("wearing " + self.player.common.impl.manager_abstract())
-        if not parts:
+        dummy = [impl.manager_abstract() for impl in self.factory.common.factory]
+        if self.factory.common.helper is not None:
+            dummy.append("wielding " + self.factory.common.helper.manager_abstract())
+        if self.factory.common.impl is not None:
+            dummy.append("wearing " + self.factory.common.impl.manager_abstract())
+        if not dummy:
             return "Inventory is empty."
-        return "Inventory: " + ", ".join(parts)
+        return "Inventory: " + ", ".join(dummy)
 
     def common_builder(self) -> None:
-        level = self.world.helper_i()
-        if self.player.data != level.processor:
-            self.status.service = "No stairs down here."
+        helper = self.business.helper_i()
+        if self.factory.data != helper.processor:
+            self.abstract.service = "No stairs down here."
             return
-        self.world.i_impl(self.config, self.world.data + 1)
-        self.player.data = self.world.helper_i().manager[0].utils_common
-        self.status.service = helper_arolla(self.world.data)
+        self.business.i_impl(self.common, self.business.data + 1)
+        self.factory.data = self.business.helper_i().manager[0].utils_common
+        self.abstract.service = helper_arolla(self.business.data)
 
     def executor_i(self) -> None:
-        level = self.world.helper_i()
-        if self.player.data != level.utils:
-            self.status.service = "No stairs up here."
+        helper = self.business.helper_i()
+        if self.factory.data != helper.utils:
+            self.abstract.service = "No stairs up here."
             return
-        if self.world.data == 1:
-            if any(item.data == "artefact" for item in self.player.common.factory):
-                self.status.helper = True
-                self.status.data = True
-                self.status.service = impl_common("win")
+        if self.business.data == 1:
+            if any(impl.data == "artefact" for impl in self.factory.common.factory):
+                self.abstract.helper = True
+                self.abstract.data = True
+                self.abstract.service = impl_common("win")
             else:
-                self.status.service = "The exit is sealed. You need the artefact!"
+                self.abstract.service = "The exit is sealed. You need the artefact!"
             return
-        self.world.i_impl(self.config, self.world.data - 1)
-        self.player.data = self.world.helper_i().manager[0].utils_common
-        self.status.service = f"You climb up to depth {self.world.data}."
+        self.business.i_impl(self.common, self.business.data - 1)
+        self.factory.data = self.business.helper_i().manager[0].utils_common
+        self.abstract.service = f"You climb up to depth {self.business.data}."
 
     def business_arolla(self) -> None:
-        level = self.world.helper_i()
-        for pos in list(level.object.factory):
-            monster = level.object.factory[pos]
-            if monster.processor or not monster.i_object:
+        helper = self.business.helper_i()
+        for data in list(helper.object.factory):
+            manager = helper.object.factory[data]
+            if manager.processor or not manager.i_object:
                 continue
-            helper = pos in self.visible
-            data = arolla_executor(
-                self.world.builder, level, monster, self.player.data, helper
+            impl = data in self.executor
+            service = arolla_executor(
+                self.business.builder, helper, manager, self.factory.data, impl
             )
-            if data == self.player.data:
-                self.i_data(monster)
-            elif data != pos:
-                del level.object.factory[pos]
-                level.object.factory[data] = monster
-                monster.data = data
+            if service == self.factory.data:
+                self.i_data(manager)
+            elif service != data:
+                del helper.object.factory[data]
+                helper.object.factory[service] = manager
+                manager.data = service
 
-    def i_data(self, monster) -> None:
-        dmg = arolla_service(
-            self.world.builder, monster.manager, self.player.common_builder()
+    def i_data(self, manager) -> None:
+        factory = arolla_service(
+            self.business.builder, manager.manager, self.factory.common_builder()
         )
-        if dmg == 0:
-            self.status.service = f"The {monster.service} misses you."
+        if factory == 0:
+            self.abstract.service = f"The {manager.service} misses you."
             return
-        self.player.utils_data(dmg)
-        self.status.service = f"The {monster.service} hits you for {dmg}."
-        if not self.player.i_object:
-            self.status.data = True
-            self.status.service = impl_common("death")
+        self.factory.utils_data(factory)
+        self.abstract.service = f"The {manager.service} hits you for {factory}."
+        if not self.factory.i_object:
+            self.abstract.data = True
+            self.abstract.service = impl_common("death")
 
     def impl_business(self) -> None:
-        level = self.world.helper_i()
-        self.visible = arolla_utils(
-            level.executor, self.player.data, self.config.helper.helper
+        helper = self.business.helper_i()
+        self.executor = arolla_utils(
+            helper.executor, self.factory.data, self.common.helper.helper
         )
-        level.object.service |= self.visible
+        helper.object.service |= self.executor
 
     def executor_arolla(self) -> dict:
         return {
-            "world": self.world.executor_arolla(),
-            "player": self.player.data_manager(),
-            "visible": [list(data) for data in sorted(self.visible)],
-            "status": self.status.executor_arolla(),
+            "world": self.business.executor_arolla(),
+            "player": self.factory.data_manager(),
+            "visible": [list(data) for data in sorted(self.executor)],
+            "status": self.abstract.executor_arolla(),
         }
 
     @classmethod
-    def dummy_manager(cls, config: FactoryDataAbstract, io, data: dict) -> "ManagerIExecutor":
-        game = cls(config, 0, io)
-        game.world = DefaultFactoryData.dummy_manager(config, data["world"])
-        game.player = BusinessServiceArolla.service_abstract(config, data["player"])
-        game.visible = {tuple(cell) for cell in data["visible"]}
-        game.status = ObjectUtilsI.dummy_manager(data["status"])
-        return game
+    def dummy_manager(cls, common: FactoryDataAbstract, utils, data: dict) -> "ManagerIExecutor":
+        service = cls(common, 0, utils)
+        service.business = DefaultFactoryData.dummy_manager(common, data["world"])
+        service.factory = BusinessServiceArolla.service_abstract(common, data["player"])
+        service.executor = {tuple(impl) for impl in data["visible"]}
+        service.abstract = ObjectUtilsI.dummy_manager(data["status"])
+        return service
 
 
 def default_service(
-    config: FactoryDataAbstract, level: ManagerBusinessArolla, builder: random.Random, data: int
+    common: FactoryDataAbstract, helper: ManagerBusinessArolla, builder: random.Random, data: int
 ) -> None:
-    processor_service(config, level, builder, data)
-    helper_builder(config, level, builder)
-    common = builder.randint(3, 6)
-    for dummy in range(common):
-        cell = level.business_arolla(builder)
-        level.object.helper[cell] = executor_factory(config, builder, data)
-    if data == config.helper.data:
-        service = level.manager[-1]
-        cell = service.processor_factory(builder)
-        level.object.helper[cell] = object_arolla(config)
-        boss = max(
-            (impl for impl in config.manager if impl not in config.service),
-            key=lambda impl: config.manager[impl][5],
+    processor_service(common, helper, builder, data)
+    helper_builder(common, helper, builder)
+    manager = builder.randint(3, 6)
+    for dummy in range(manager):
+        factory = helper.business_arolla(builder)
+        helper.object.helper[factory] = executor_factory(common, builder, data)
+    if data == common.helper.data:
+        service = helper.manager[-1]
+        impl = service.processor_factory(builder)
+        helper.object.helper[impl] = object_arolla(common)
+        abstract = max(
+            (impl for impl in common.manager if impl not in common.service),
+            key=lambda impl: common.manager[impl][5],
         )
-        guard = service.processor_factory(builder)
-        level.object.factory[guard] = AbstractBusinessFactory.builder_factory(
-            config, boss, guard
+        executor = service.processor_factory(builder)
+        helper.object.factory[executor] = AbstractBusinessFactory.builder_factory(
+            common, abstract, executor
         )
 
 
-def service_arolla(game, trap) -> None:
-    trap.helper = True
-    level = game.world.helper_i()
-    builder = game.world.builder
-    if trap.data == "dart":
-        dmg = builder.randint(1, 4)
-        game.player.utils_data(dmg)
-        game.status.service = f"A dart trap hits you for {dmg}."
-    elif trap.data == "teleport":
-        game.player.data = level.business_arolla(builder, (game.player.data,))
-        game.status.service = "A teleport trap whisks you away!"
+def service_arolla(service, processor) -> None:
+    processor.helper = True
+    helper = service.business.helper_i()
+    builder = service.business.builder
+    if processor.data == "dart":
+        factory = builder.randint(1, 4)
+        service.factory.utils_data(factory)
+        service.abstract.service = f"A dart trap hits you for {factory}."
+    elif processor.data == "teleport":
+        service.factory.data = helper.business_arolla(builder, (service.factory.data,))
+        service.abstract.service = "A teleport trap whisks you away!"
     else:
-        weak = min(
-            (impl for impl in game.config.manager if impl not in game.config.service),
-            key=lambda impl: game.config.manager[impl][3],
+        arolla = min(
+            (impl for impl in service.common.manager if impl not in service.common.service),
+            key=lambda impl: service.common.manager[impl][3],
         )
         for dummy in range(2):
-            cell = level.business_arolla(builder)
-            level.object.factory[cell] = AbstractBusinessFactory.builder_factory(
-                game.config, weak, cell
+            data = helper.business_arolla(builder)
+            helper.object.factory[data] = AbstractBusinessFactory.builder_factory(
+                service.common, arolla, data
             )
-        game.status.service = "An alarm trap! Monsters stir in the dark!"
+        service.abstract.service = "An alarm trap! Monsters stir in the dark!"
 
 
-def i_service(game, item) -> None:
-    level = game.world.helper_i()
-    magic = game.player.business.service
-    if "mapping" in item.service:
-        for yy in range(level.executor.default):
-            for xx in range(level.executor.common):
-                if level.impl_dummy((xx, yy)):
-                    level.object.service.add((xx, yy))
-        game.status.service = "The dungeon map reveals itself!"
-    elif "teleportation" in item.service:
-        game.player.data = level.business_arolla(game.world.builder, (game.player.data,))
-        game.status.service = "You are teleported!"
+def i_service(service, impl) -> None:
+    helper = service.business.helper_i()
+    factory = service.factory.business.service
+    if "mapping" in impl.service:
+        for builder in range(helper.executor.default):
+            for business in range(helper.executor.common):
+                if helper.impl_dummy((business, builder)):
+                    helper.object.service.add((business, builder))
+        service.abstract.service = "The dungeon map reveals itself!"
+    elif "teleportation" in impl.service:
+        service.factory.data = helper.business_arolla(
+            service.business.builder, (service.factory.data,)
+        )
+        service.abstract.service = "You are teleported!"
     else:
-        hits = 0
-        for pos in list(level.object.factory):
-            monster = level.object.factory[pos]
-            if pos in game.visible and not monster.processor:
-                monster.utils_data(item.helper + magic)
-                hits += 1
-                if not monster.i_object:
-                    del level.object.factory[pos]
-                    game.player.arolla_utils(monster.object)
-        game.status.service = f"Fireball! {hits} monsters burn."
+        manager = 0
+        for data in list(helper.object.factory):
+            processor = helper.object.factory[data]
+            if data in service.executor and not processor.processor:
+                processor.utils_data(impl.helper + factory)
+                manager += 1
+                if not processor.i_object:
+                    del helper.object.factory[data]
+                    service.factory.arolla_utils(processor.object)
+        service.abstract.service = f"Fireball! {manager} monsters burn."
 
 
-def processor_dummy(game, monster) -> None:
-    level = game.world.helper_i()
-    dmg = arolla_service(game.world.builder, game.player.builder_utils(), monster.executor)
-    if dmg == 0:
-        game.status.service = f"You miss the {monster.service}."
+def processor_dummy(service, manager) -> None:
+    helper = service.business.helper_i()
+    factory = arolla_service(
+        service.business.builder, service.factory.builder_utils(), manager.executor
+    )
+    if factory == 0:
+        service.abstract.service = f"You miss the {manager.service}."
         return
-    monster.utils_data(dmg)
-    if not monster.i_object:
-        del level.object.factory[monster.data]
-        gained = game.player.arolla_utils(monster.object)
-        game.status.service = (
-            f"You kill the {monster.service}! +{monster.object} xp."
-            + (f" Level up: {game.player.arolla}!" if gained else "")
+    manager.utils_data(factory)
+    if not manager.i_object:
+        del helper.object.factory[manager.data]
+        dummy = service.factory.arolla_utils(manager.object)
+        service.abstract.service = (
+            f"You kill the {manager.service}! +{manager.object} xp."
+            + (f" Level up: {service.factory.arolla}!" if dummy else "")
         )
     else:
-        game.status.service = f"You hit the {monster.service} for {dmg}."
+        service.abstract.service = f"You hit the {manager.service} for {factory}."
 
 
-def i_builder(game) -> None:
-    game.business_arolla()
-    game.impl_business()
+def i_builder(service) -> None:
+    service.business_arolla()
+    service.impl_business()

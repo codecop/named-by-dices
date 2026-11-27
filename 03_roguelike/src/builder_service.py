@@ -21,15 +21,15 @@ class FactoryCommonData:
 
     @classmethod
     def business_i(cls, data: dict) -> "FactoryCommonData":
-        settings = cls()
-        settings.common = data["width"]
-        settings.default = data["height"]
-        settings.data = data["max_depth"]
-        settings.helper = data["fov_radius"]
-        settings.factory = data["min_rooms"]
-        settings.impl = data["max_rooms"]
-        settings.service = data["start_hp"]
-        return settings
+        dummy = cls()
+        dummy.common = data["width"]
+        dummy.default = data["height"]
+        dummy.data = data["max_depth"]
+        dummy.helper = data["fov_radius"]
+        dummy.factory = data["min_rooms"]
+        dummy.impl = data["max_rooms"]
+        dummy.service = data["start_hp"]
+        return dummy
 
 
 class FactoryDataAbstract:
@@ -43,25 +43,26 @@ class FactoryDataAbstract:
     def executor_arolla(self) -> dict:
         return {
             "settings": self.helper.data_default(),
-            "monsters": {key: list(value) for key, value in self.manager.items()},
+            "monsters": {helper: list(impl) for helper, impl in self.manager.items()},
             "items": {
-                key: [list(entry) for entry in value] for key, value in self.object.items()
+                helper: [list(impl) for impl in utils]
+                for helper, utils in self.object.items()
             },
             "traps": list(self.processor),
-            "npcs": {key: list(value) for key, value in self.service.items()},
+            "npcs": {helper: list(impl) for helper, impl in self.service.items()},
         }
 
     @classmethod
     def dummy_manager(cls, data: dict) -> "FactoryDataAbstract":
-        game = cls()
-        game.helper = FactoryCommonData.business_i(data["settings"])
-        game.manager = {key: tuple(value) for key, value in data["monsters"].items()}
-        game.object = {
-            key: [tuple(entry) for entry in value] for key, value in data["items"].items()
+        manager = cls()
+        manager.helper = FactoryCommonData.business_i(data["settings"])
+        manager.manager = {helper: tuple(impl) for helper, impl in data["monsters"].items()}
+        manager.object = {
+            helper: [tuple(impl) for impl in utils] for helper, utils in data["items"].items()
         }
-        game.processor = list(data["traps"])
-        game.service = {key: tuple(value) for key, value in data["npcs"].items()}
-        return game
+        manager.processor = list(data["traps"])
+        manager.service = {helper: tuple(impl) for helper, impl in data["npcs"].items()}
+        return manager
 
 
 def object_dummy(builder: str, data: int) -> int:
@@ -71,31 +72,31 @@ def object_dummy(builder: str, data: int) -> int:
         raise ValueError(f"line {data}: {builder!r} is not a number") from None
 
 
-def data_impl(game: FactoryDataAbstract, service: list, data: int) -> None:
+def data_impl(manager: FactoryDataAbstract, service: list, data: int) -> None:
     if len(service) != 3:
         raise ValueError(f"line {data}: setting needs a key and a value")
     helper = service[1]
     builder = object_dummy(service[2], data)
-    settings = game.helper
+    common = manager.helper
     if helper == "width":
-        settings.common = builder
+        common.common = builder
     elif helper == "height":
-        settings.default = builder
+        common.default = builder
     elif helper == "max_depth":
-        settings.data = builder
+        common.data = builder
     elif helper == "fov_radius":
-        settings.helper = builder
+        common.helper = builder
     elif helper == "min_rooms":
-        settings.factory = builder
+        common.factory = builder
     elif helper == "max_rooms":
-        settings.impl = builder
+        common.impl = builder
     elif helper == "start_hp":
-        settings.service = builder
+        common.service = builder
     else:
         raise ValueError(f"line {data}: unknown setting {helper!r}")
 
 
-def helper_processor(game: FactoryDataAbstract, service: list, data: int) -> None:
+def helper_processor(manager: FactoryDataAbstract, service: list, data: int) -> None:
     if len(service) < 8:
         raise ValueError(
             f"line {data}: monster needs letter, name, hp, attack, defence, xp, min depth"
@@ -103,56 +104,63 @@ def helper_processor(game: FactoryDataAbstract, service: list, data: int) -> Non
     impl = service[1]
     helper = " ".join(service[2:-5])
     factory = [object_dummy(builder, data) for builder in service[-5:]]
-    game.manager[impl] = (helper, factory[0], factory[1], factory[2], factory[3], factory[4])
+    manager.manager[impl] = (
+        helper,
+        factory[0],
+        factory[1],
+        factory[2],
+        factory[3],
+        factory[4],
+    )
 
 
-def dummy_business(game: FactoryDataAbstract, service: list, data: int) -> None:
+def dummy_business(manager: FactoryDataAbstract, service: list, data: int) -> None:
     if len(service) < 4:
         raise ValueError(f"line {data}: npc needs letter, name and hp")
     impl = service[1]
     helper = " ".join(service[2:-1])
     builder = object_dummy(service[-1], data)
-    game.manager[impl] = (helper, builder, 0, 0, 0, 1)
-    game.service[impl] = (helper, builder)
+    manager.manager[impl] = (helper, builder, 0, 0, 0, 1)
+    manager.service[impl] = (helper, builder)
 
 
-def executor_helper(game: FactoryDataAbstract, service: list, data: int) -> None:
+def executor_helper(manager: FactoryDataAbstract, service: list, data: int) -> None:
     if len(service) < 5:
         raise ValueError(f"line {data}: item needs kind, letter, name and power")
     impl = service[1]
     helper = service[2]
     builder = " ".join(service[3:-1])
     utils = object_dummy(service[-1], data)
-    game.object.setdefault(impl, []).append((helper, builder, utils))
+    manager.object.setdefault(impl, []).append((helper, builder, utils))
 
 
-def impl_arolla(game: FactoryDataAbstract, service: list, data: int) -> None:
+def impl_arolla(manager: FactoryDataAbstract, service: list, data: int) -> None:
     if len(service) != 2:
         raise ValueError(f"line {data}: trap needs exactly one kind")
-    game.processor.append(service[1])
+    manager.processor.append(service[1])
 
 
-def abstract_business(text: str) -> FactoryDataAbstract:
-    game = FactoryDataAbstract()
-    for data, raw in enumerate(text.splitlines(), start=1):
-        helper = raw.strip()
+def abstract_business(dummy: str) -> FactoryDataAbstract:
+    manager = FactoryDataAbstract()
+    for data, factory in enumerate(dummy.splitlines(), start=1):
+        helper = factory.strip()
         if not helper or helper.startswith("#"):
             continue
         service = helper.split()
         impl = service[0]
         if impl == "setting":
-            data_impl(game, service, data)
+            data_impl(manager, service, data)
         elif impl == "monster":
-            helper_processor(game, service, data)
+            helper_processor(manager, service, data)
         elif impl == "npc":
-            dummy_business(game, service, data)
+            dummy_business(manager, service, data)
         elif impl == "item":
-            executor_helper(game, service, data)
+            executor_helper(manager, service, data)
         elif impl == "trap":
-            impl_arolla(game, service, data)
+            impl_arolla(manager, service, data)
         else:
             raise ValueError(f"line {data}: unknown directive {impl!r}")
-    return game
+    return manager
 
 
 def business_utils(data: str) -> FactoryDataAbstract:

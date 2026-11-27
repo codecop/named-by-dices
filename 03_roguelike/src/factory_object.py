@@ -37,11 +37,11 @@ def executor_impl():
     return business_factory
 
 
-def object_service(getch) -> str:
-    data = getch()
+def object_service(helper) -> str:
+    data = helper()
     if data == "\x1b":
-        helper = getch()
-        service = getch()
+        impl = helper()
+        service = helper()
         common = {"[A": "k", "[B": "j", "[C": "l", "[D": "h"}
-        return common.get(helper + service, "")
+        return common.get(impl + service, "")
     return data

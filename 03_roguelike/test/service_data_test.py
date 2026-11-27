@@ -17,8 +17,8 @@ def utils_common():
     return business_utils(str(Path(__file__).resolve().parent.parent / "game.txt"))
 
 
-def service_builder(letter="!", name="healing potion", kind="potion", power=6, charges=0):
-    return ObjectDummyService(letter, name, kind, power, charges)
+def service_builder(impl="!", service="healing potion", data="potion", helper=6, factory=0):
+    return ObjectDummyService(impl, service, data, helper, factory)
 
 
 class TestAttributesAndSkills(unittest.TestCase):

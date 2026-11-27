@@ -31,18 +31,20 @@ def builder_utils(
 
 
 def arolla_utils(
-    executor: UtilsCommonExecutor, origin: PROCESSOR_I, data: int
+    executor: UtilsCommonExecutor, helper: PROCESSOR_I, data: int
 ) -> set[PROCESSOR_I]:
-    impl = {origin}
-    for helper in range(max(0, origin[1] - data), min(executor.default, origin[1] + data + 1)):
-        for service in range(
-            max(0, origin[0] - data), min(executor.common, origin[0] + data + 1)
+    impl = {helper}
+    for service in range(
+        max(0, helper[1] - data), min(executor.default, helper[1] + data + 1)
+    ):
+        for business in range(
+            max(0, helper[0] - data), min(executor.common, helper[0] + data + 1)
         ):
-            common = (service, helper)
+            common = (business, service)
             if (
-                i_data(origin, common) <= data
+                i_data(helper, common) <= data
                 and not executor.factory_default(common)
-                and builder_utils(executor, origin, common)
+                and builder_utils(executor, helper, common)
             ):
                 impl.add(common)
     return impl

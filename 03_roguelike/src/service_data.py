@@ -71,19 +71,19 @@ class DefaultObjectManager:
 
     @classmethod
     def dummy_manager(cls, data: dict) -> "DefaultObjectManager":
-        inventory = cls()
-        inventory.factory = [factory_arolla(helper) for helper in data["items"]]
-        inventory.helper = factory_arolla(data["weapon"]) if data["weapon"] else None
-        inventory.impl = factory_arolla(data["armour"]) if data["armour"] else None
-        inventory.service = data["gold"]
-        return inventory
+        helper = cls()
+        helper.factory = [factory_arolla(impl) for impl in data["items"]]
+        helper.helper = factory_arolla(data["weapon"]) if data["weapon"] else None
+        helper.impl = factory_arolla(data["armour"]) if data["armour"] else None
+        helper.service = data["gold"]
+        return helper
 
 
 class BusinessServiceArolla(ImplCommonProcessor):
     def __init__(
-        self, config: FactoryDataAbstract, data: PROCESSOR_I, builder: random.Random
+        self, common: FactoryDataAbstract, data: PROCESSOR_I, builder: random.Random
     ) -> None:
-        super().__init__("@", "you", data, config.helper.service)
+        super().__init__("@", "you", data, common.helper.service)
         self.builder = AbstractUtilsData(
             builder.randint(8, 12), builder.randint(8, 12), builder.randint(8, 12)
         )
@@ -93,7 +93,7 @@ class BusinessServiceArolla(ImplCommonProcessor):
         self.common = DefaultObjectManager()
         self.abstract = 0
         self.arolla = 1
-        self.factory = config.helper.service + self.builder.common
+        self.factory = common.helper.service + self.builder.common
         self.helper = self.factory
 
     def arolla_utils(self, data: int) -> int:
@@ -131,19 +131,19 @@ class BusinessServiceArolla(ImplCommonProcessor):
         }
 
     @classmethod
-    def service_abstract(cls, config: FactoryDataAbstract, data: dict) -> "BusinessServiceArolla":
-        player = cls(config, tuple(data["actor"]["pos"]), random.Random(0))
-        player.helper = data["actor"]["hp"]
-        player.factory = data["actor"]["max_hp"]
-        player.builder = AbstractUtilsData.business_i(data["attributes"])
-        player.business = BusinessHelperCommon.service_abstract(data["skills"])
-        player.common = DefaultObjectManager.dummy_manager(data["inventory"])
-        player.abstract = data["xp"]
-        player.arolla = data["level"]
-        return player
+    def service_abstract(cls, common: FactoryDataAbstract, data: dict) -> "BusinessServiceArolla":
+        helper = cls(common, tuple(data["actor"]["pos"]), random.Random(0))
+        helper.helper = data["actor"]["hp"]
+        helper.factory = data["actor"]["max_hp"]
+        helper.builder = AbstractUtilsData.business_i(data["attributes"])
+        helper.business = BusinessHelperCommon.service_abstract(data["skills"])
+        helper.common = DefaultObjectManager.dummy_manager(data["inventory"])
+        helper.abstract = data["xp"]
+        helper.arolla = data["level"]
+        return helper
 
 
 def default_executor(
-    config: FactoryDataAbstract, data: PROCESSOR_I, builder: random.Random
+    common: FactoryDataAbstract, data: PROCESSOR_I, builder: random.Random
 ) -> BusinessServiceArolla:
-    return BusinessServiceArolla(config, data, builder)
+    return BusinessServiceArolla(common, data, builder)

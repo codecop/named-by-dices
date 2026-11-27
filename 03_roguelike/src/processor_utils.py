@@ -6,23 +6,24 @@ from src.object_common import PROCESSOR_I, ImplCommonProcessor, data_arolla, i_d
 
 
 class AbstractBusinessFactory(ImplCommonProcessor):
-    def __init__(
-        self, impl: str, service: str, data: PROCESSOR_I, stats: tuple
-    ) -> None:
-        super().__init__(impl, service, data, stats[0])
-        self.manager = stats[1]
-        self.executor = stats[2]
-        self.object = stats[3]
-        self.processor = stats[4]
+    def __init__(self, impl: str, service: str, data: PROCESSOR_I, helper: tuple) -> None:
+        super().__init__(impl, service, data, helper[0])
+        self.manager = helper[1]
+        self.executor = helper[2]
+        self.object = helper[3]
+        self.processor = helper[4]
         self.utils = False
 
     @classmethod
     def builder_factory(
-        cls, config: FactoryDataAbstract, impl: str, data: PROCESSOR_I
+        cls, common: FactoryDataAbstract, impl: str, data: PROCESSOR_I
     ) -> "AbstractBusinessFactory":
-        stats = config.manager[impl]
+        helper = common.manager[impl]
         return cls(
-            impl, stats[0], data, (stats[1], stats[2], stats[3], stats[4], impl in config.service)
+            impl,
+            helper[0],
+            data,
+            (helper[1], helper[2], helper[3], helper[4], impl in common.service),
         )
 
     def executor_common(self) -> dict:
@@ -37,76 +38,78 @@ class AbstractBusinessFactory(ImplCommonProcessor):
 
     @classmethod
     def i_utils(cls, data: dict) -> "AbstractBusinessFactory":
-        monster = cls(
+        helper = cls(
             data["letter"],
             data["name"],
             tuple(data["pos"]),
             (data["hp"], data["attack"], data["defence"], data["xp"], data["friendly"]),
         )
-        monster.factory = data["max_hp"]
-        monster.utils = data["healed"]
-        return monster
+        helper.factory = data["max_hp"]
+        helper.utils = data["healed"]
+        return helper
 
 
 def processor_service(
-    config: FactoryDataAbstract,
-    level: ManagerBusinessArolla,
+    common: FactoryDataAbstract,
+    helper: ManagerBusinessArolla,
     builder: random.Random,
     data: int,
 ) -> None:
-    helper = level.manager[0]
-    common = builder.randint(6, 10) + data
+    manager = helper.manager[0]
+    processor = builder.randint(6, 10) + data
     dummy = [
         impl
-        for impl, stats in config.manager.items()
-        if stats[5] <= data and impl not in config.service
+        for impl, arolla in common.manager.items()
+        if arolla[5] <= data and impl not in common.service
     ]
     service = 0
     utils = 0
-    while service < common and utils < 300:
+    while service < processor and utils < 300:
         utils += 1
-        factory = level.business_arolla(builder)
-        if helper.object_default(factory):
+        factory = helper.business_arolla(builder)
+        if manager.object_default(factory):
             continue
         impl = builder.choice(dummy)
-        level.object.factory[factory] = AbstractBusinessFactory.builder_factory(
-            config, impl, factory
+        helper.object.factory[factory] = AbstractBusinessFactory.builder_factory(
+            common, impl, factory
         )
         service += 1
 
 
 def helper_builder(
-    config: FactoryDataAbstract, level: ManagerBusinessArolla, builder: random.Random
+    common: FactoryDataAbstract, helper: ManagerBusinessArolla, builder: random.Random
 ) -> None:
-    for impl in config.service:
-        helper = builder.choice(level.manager[1:])
-        data = helper.processor_factory(builder)
-        level.object.factory[data] = AbstractBusinessFactory.builder_factory(config, impl, data)
+    for impl in common.service:
+        manager = builder.choice(helper.manager[1:])
+        data = manager.processor_factory(builder)
+        helper.object.factory[data] = AbstractBusinessFactory.builder_factory(
+            common, impl, data
+        )
 
 
 def arolla_executor(
     builder: random.Random,
-    level: ManagerBusinessArolla,
-    monster: AbstractBusinessFactory,
-    helper: PROCESSOR_I,
-    can_see: bool,
+    helper: ManagerBusinessArolla,
+    manager: AbstractBusinessFactory,
+    data: PROCESSOR_I,
+    executor: bool,
 ) -> PROCESSOR_I:
-    occupied = set(level.object.factory) | set(level.object.helper)
-    occupied.discard(monster.data)
-    if can_see:
-        if i_data(monster.data, helper) == 1:
-            return helper
-        data = service_dummy(monster.data, helper)
-        if level.impl_dummy(data) and data not in occupied:
+    abstract = set(helper.object.factory) | set(helper.object.helper)
+    abstract.discard(manager.data)
+    if executor:
+        if i_data(manager.data, data) == 1:
             return data
+        service = service_dummy(manager.data, data)
+        if helper.impl_dummy(service) and service not in abstract:
+            return service
     common = [
-        service
-        for service in data_arolla(monster.data)
-        if level.impl_dummy(service) and service not in occupied and service != helper
+        impl
+        for impl in data_arolla(manager.data)
+        if helper.impl_dummy(impl) and impl not in abstract and impl != data
     ]
     if common and builder.random() < 0.3:
         return builder.choice(common)
-    return monster.data
+    return manager.data
 
 
 def dummy_processor(data: dict) -> AbstractBusinessFactory:

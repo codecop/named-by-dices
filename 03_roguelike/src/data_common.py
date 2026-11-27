@@ -98,14 +98,14 @@ class UtilsCommonExecutor:
         return {
             "width": self.common,
             "height": self.default,
-            "grid": ["".join(row) for row in self.builder],
+            "grid": ["".join(helper) for helper in self.builder],
         }
 
     @classmethod
     def dummy_manager(cls, data: dict) -> "UtilsCommonExecutor":
-        grid = cls(data["width"], data["height"])
-        grid.builder = [list(row) for row in data["grid"]]
-        return grid
+        helper = cls(data["width"], data["height"])
+        helper.builder = [list(impl) for impl in data["grid"]]
+        return helper
 
 
 class ServiceObjectCommon:
@@ -139,20 +139,21 @@ class ServiceObjectCommon:
     def executor_arolla(self) -> dict:
         return {
             "traps": [
-                {"pos": list(data), **trap.object_factory()}
-                for data, trap in self.impl.items()
+                {"pos": list(data), **processor.object_factory()}
+                for data, processor in self.impl.items()
             ],
             "explored": [list(data) for data in sorted(self.service)],
         }
 
     @classmethod
     def dummy_manager(cls, data: dict) -> "ServiceObjectCommon":
-        layer = cls()
-        layer.impl = {
-            tuple(trap["pos"]): ImplProcessorDefault.i_utils(trap) for trap in data["traps"]
+        helper = cls()
+        helper.impl = {
+            tuple(processor["pos"]): ImplProcessorDefault.i_utils(processor)
+            for processor in data["traps"]
         }
-        layer.service = {tuple(helper) for helper in data["explored"]}
-        return layer
+        helper.service = {tuple(impl) for impl in data["explored"]}
+        return helper
 
 
 class ManagerBusinessArolla:
@@ -189,131 +190,131 @@ class ManagerBusinessArolla:
             "depth": self.data,
             "grid": self.executor.executor_arolla(),
             "entities": self.object.executor_arolla(),
-            "rooms": [room.manager_object() for room in self.manager],
+            "rooms": [manager.manager_object() for manager in self.manager],
             "stairs_down": list(self.processor) if self.processor else None,
             "stairs_up": list(self.utils) if self.utils else None,
         }
 
     @classmethod
     def dummy_manager(cls, data: dict) -> "ManagerBusinessArolla":
-        level = cls(data["grid"]["width"], data["grid"]["height"], data["depth"])
-        level.executor = UtilsCommonExecutor.dummy_manager(data["grid"])
-        level.object = ServiceObjectCommon.dummy_manager(data["entities"])
-        level.manager = [ArollaImplData.data_arolla(room) for room in data["rooms"]]
-        level.processor = tuple(data["stairs_down"]) if data["stairs_down"] else None
-        level.utils = tuple(data["stairs_up"]) if data["stairs_up"] else None
-        return level
+        helper = cls(data["grid"]["width"], data["grid"]["height"], data["depth"])
+        helper.executor = UtilsCommonExecutor.dummy_manager(data["grid"])
+        helper.object = ServiceObjectCommon.dummy_manager(data["entities"])
+        helper.manager = [ArollaImplData.data_arolla(manager) for manager in data["rooms"]]
+        helper.processor = tuple(data["stairs_down"]) if data["stairs_down"] else None
+        helper.utils = tuple(data["stairs_up"]) if data["stairs_up"] else None
+        return helper
 
 
 def data_service(
-    config: FactoryDataAbstract, builder: random.Random, data: int
+    factory: FactoryDataAbstract, builder: random.Random, data: int
 ) -> ManagerBusinessArolla:
-    level = ManagerBusinessArolla(config.helper.common, config.helper.default, data)
-    common = builder.randint(config.helper.factory, config.helper.impl)
-    i_impl(level, builder, common)
-    impl_business(level, builder)
-    common_helper(level)
-    processor_manager(config, level, builder)
-    utils_executor(config, level, builder)
-    return level
+    helper = ManagerBusinessArolla(factory.helper.common, factory.helper.default, data)
+    common = builder.randint(factory.helper.factory, factory.helper.impl)
+    i_impl(helper, builder, common)
+    impl_business(helper, builder)
+    common_helper(helper)
+    processor_manager(factory, helper, builder)
+    utils_executor(factory, helper, builder)
+    return helper
 
 
-def i_impl(level: ManagerBusinessArolla, builder: random.Random, common: int) -> None:
-    helper = 0
-    while len(level.manager) < common and helper < 500:
-        helper += 1
+def i_impl(helper: ManagerBusinessArolla, builder: random.Random, common: int) -> None:
+    dummy = 0
+    while len(helper.manager) < common and dummy < 500:
+        dummy += 1
         data = builder.randint(4, 10)
         service = builder.randint(3, 7)
-        impl = builder.randint(1, level.executor.common - data - 2)
-        factory = builder.randint(1, level.executor.default - service - 2)
-        room = ArollaImplData(impl, factory, data, service)
-        if any(room.impl_builder(dummy) for dummy in level.manager):
+        impl = builder.randint(1, helper.executor.common - data - 2)
+        factory = builder.randint(1, helper.executor.default - service - 2)
+        manager = ArollaImplData(impl, factory, data, service)
+        if any(manager.impl_builder(processor) for processor in helper.manager):
             continue
-        level.manager.append(room)
+        helper.manager.append(manager)
         for utils in range(factory, factory + service):
             for abstract in range(impl, impl + data):
-                level.helper_executor((abstract, utils), ".")
+                helper.helper_executor((abstract, utils), ".")
 
 
-def impl_business(level: ManagerBusinessArolla, builder: random.Random) -> None:
-    manager = level.manager
-    for helper in range(len(manager) - 1):
-        i_service(level, manager[helper].utils_common, manager[helper + 1].utils_common, builder)
+def impl_business(helper: ManagerBusinessArolla, builder: random.Random) -> None:
+    manager = helper.manager
+    for dummy in range(len(manager) - 1):
+        i_service(helper, manager[dummy].utils_common, manager[dummy + 1].utils_common, builder)
     if len(manager) > 3:
-        helper = builder.randrange(len(manager) - 2)
-        i_service(level, manager[helper].utils_common, manager[helper + 2].utils_common, builder)
+        dummy = builder.randrange(len(manager) - 2)
+        i_service(helper, manager[dummy].utils_common, manager[dummy + 2].utils_common, builder)
 
 
 def i_service(
-    level: ManagerBusinessArolla,
+    helper: ManagerBusinessArolla,
     data: PROCESSOR_I,
-    helper: PROCESSOR_I,
+    impl: PROCESSOR_I,
     builder: random.Random,
 ) -> None:
     if builder.random() < 0.5:
-        abstract_processor(level, data[0], data[1], helper[0], data[1])
-        abstract_processor(level, helper[0], data[1], helper[0], helper[1])
+        abstract_processor(helper, data[0], data[1], impl[0], data[1])
+        abstract_processor(helper, impl[0], data[1], impl[0], impl[1])
     else:
-        abstract_processor(level, data[0], data[1], data[0], helper[1])
-        abstract_processor(level, data[0], helper[1], helper[0], helper[1])
+        abstract_processor(helper, data[0], data[1], data[0], impl[1])
+        abstract_processor(helper, data[0], impl[1], impl[0], impl[1])
 
 
 def abstract_processor(
-    level: ManagerBusinessArolla, abstract: int, arolla: int, common: int, default: int
+    helper: ManagerBusinessArolla, abstract: int, arolla: int, common: int, default: int
 ) -> None:
     if arolla == default:
-        for helper in range(min(abstract, common), max(abstract, common) + 1):
-            level.helper_executor((helper, arolla), ".")
+        for impl in range(min(abstract, common), max(abstract, common) + 1):
+            helper.helper_executor((impl, arolla), ".")
     else:
         for service in range(min(arolla, default), max(arolla, default) + 1):
-            level.helper_executor((abstract, service), ".")
+            helper.helper_executor((abstract, service), ".")
 
 
-def common_helper(level: ManagerBusinessArolla) -> None:
-    for room in level.manager:
-        for data in room.service_dummy():
-            if level.utils_data(data) != ".":
+def common_helper(helper: ManagerBusinessArolla) -> None:
+    for manager in helper.manager:
+        for data in manager.service_dummy():
+            if helper.utils_data(data) != ".":
                 continue
-            outside = [
-                helper
-                for helper in builder_default(data)
-                if level.impl_dummy(helper) and not room.object_default(helper)
+            builder = [
+                impl
+                for impl in builder_default(data)
+                if helper.impl_dummy(impl) and not manager.object_default(impl)
             ]
-            if outside:
-                level.helper_executor(data, "+")
+            if builder:
+                helper.helper_executor(data, "+")
 
 
 def processor_manager(
-    config: FactoryDataAbstract, level: ManagerBusinessArolla, builder: random.Random
+    factory: FactoryDataAbstract, helper: ManagerBusinessArolla, builder: random.Random
 ) -> None:
-    helper = level.manager[0]
-    level.utils = helper.processor_factory(builder)
-    level.helper_executor(level.utils, "<")
-    if level.data < config.helper.data:
-        service = builder.choice(level.manager[1:])
+    manager = helper.manager[0]
+    helper.utils = manager.processor_factory(builder)
+    helper.helper_executor(helper.utils, "<")
+    if helper.data < factory.helper.data:
+        service = builder.choice(helper.manager[1:])
         data = service.processor_factory(builder)
         dummy = 0
-        while data == level.utils and dummy < 20:
+        while data == helper.utils and dummy < 20:
             data = service.processor_factory(builder)
             dummy += 1
-        level.processor = data
-        level.helper_executor(data, ">")
+        helper.processor = data
+        helper.helper_executor(data, ">")
 
 
 def utils_executor(
-    config: FactoryDataAbstract, level: ManagerBusinessArolla, builder: random.Random
+    factory: FactoryDataAbstract, helper: ManagerBusinessArolla, builder: random.Random
 ) -> None:
-    if not config.processor:
+    if not factory.processor:
         return
     common = builder.randint(3, 6)
-    helper = level.manager[0]
+    manager = helper.manager[0]
     data = 0
     service = 0
     while data < common and service < 200:
         service += 1
-        impl = level.business_arolla(builder, (level.processor, level.utils))
-        if helper.object_default(impl) or impl in level.object.impl:
+        impl = helper.business_arolla(builder, (helper.processor, helper.utils))
+        if manager.object_default(impl) or impl in helper.object.impl:
             continue
-        factory = builder.choice(config.processor)
-        level.object.impl[impl] = ImplProcessorDefault(factory)
+        processor = builder.choice(factory.processor)
+        helper.object.impl[impl] = ImplProcessorDefault(processor)
         data += 1

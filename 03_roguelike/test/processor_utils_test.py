@@ -17,9 +17,9 @@ def utils_common():
     return business_utils(str(Path(__file__).resolve().parent.parent / "game.txt"))
 
 
-def object_factory(level, letter, pos):
-    monster = AbstractBusinessFactory.builder_factory(utils_common(), letter, pos)
-    level.object.factory[pos] = monster
+def object_factory(helper, impl, data):
+    monster = AbstractBusinessFactory.builder_factory(utils_common(), impl, data)
+    helper.object.factory[data] = monster
     return monster
 
 
@@ -76,35 +76,35 @@ class TestSpawning(unittest.TestCase):
 
 
 class TestChooseMove(unittest.TestCase):
-    def open_level(self):
-        level = ManagerBusinessArolla(10, 10, 1)
-        level.manager.append(ArollaImplData(1, 1, 8, 8))
+    def utils_abstract(self):
+        helper = ManagerBusinessArolla(10, 10, 1)
+        helper.manager.append(ArollaImplData(1, 1, 8, 8))
         for yy in range(1, 9):
             for xx in range(1, 9):
-                level.helper_executor((xx, yy), ".")
-        return level
+                helper.helper_executor((xx, yy), ".")
+        return helper
 
     def test_seen_target_is_chased(self):
-        level = self.open_level()
+        level = self.utils_abstract()
         monster = object_factory(level, "r", (5, 5))
         step = arolla_executor(random.Random(1), level, monster, (5, 1), True)
         self.assertEqual(step, (5, 4))
 
     def test_adjacent_seen_target_is_attacked(self):
-        level = self.open_level()
+        level = self.utils_abstract()
         monster = object_factory(level, "r", (5, 5))
         step = arolla_executor(random.Random(1), level, monster, (5, 4), True)
         self.assertEqual(step, (5, 4))
 
     def test_wall_blocks_the_chase(self):
-        level = self.open_level()
+        level = self.utils_abstract()
         level.helper_executor((5, 4), "#")
         monster = object_factory(level, "r", (5, 5))
         step = arolla_executor(random.Random(1), level, monster, (5, 1), True)
         self.assertNotEqual(step, (5, 4))
 
     def test_unseen_target_means_wander_or_stay(self):
-        level = self.open_level()
+        level = self.utils_abstract()
         monster = object_factory(level, "r", (5, 5))
         step = arolla_executor(random.Random(1), level, monster, (1, 1), False)
         self.assertTrue(step == (5, 5) or level.impl_dummy(step))

@@ -21,13 +21,13 @@ def utils_common():
     return business_utils(str(Path(__file__).resolve().parent.parent / "game.txt"))
 
 
-def processor_service(level, start):
-    seen = {start}
-    queue = [start]
+def processor_service(helper, data):
+    seen = {data}
+    queue = [data]
     while queue:
         cell = queue.pop()
         for neighbour in builder_default(cell):
-            if neighbour not in seen and level.impl_dummy(neighbour):
+            if neighbour not in seen and helper.impl_dummy(neighbour):
                 seen.add(neighbour)
                 queue.append(neighbour)
     return seen

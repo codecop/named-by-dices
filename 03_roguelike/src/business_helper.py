@@ -6,73 +6,73 @@ UTILS_PROCESSOR = {
 }
 
 
-def service_dummy(game) -> str:
-    player = game.player
-    stats = (
-        f"Str {player.builder.builder} Dex {player.builder.business} "
-        f"Con {player.builder.common}"
+def service_dummy(impl) -> str:
+    factory = impl.factory
+    common = (
+        f"Str {factory.builder.builder} Dex {factory.builder.business} "
+        f"Con {factory.builder.common}"
     )
-    skills = (
-        f"Fight {player.business.data} Dodge {player.business.helper} "
-        f"Magic {player.business.service}"
+    default = (
+        f"Fight {factory.business.data} Dodge {factory.business.helper} "
+        f"Magic {factory.business.service}"
     )
     return (
-        f"HP {player.helper}/{player.factory}  Lvl {player.arolla}  XP {player.abstract}  "
-        f"{stats}  {skills}  Gold {player.common.service}  "
-        f"Depth {game.world.data}/{game.config.helper.data}  "
-        f"Atk {player.builder_utils()} Def {player.common_builder()}"
+        f"HP {factory.helper}/{factory.factory}  Lvl {factory.arolla}  "
+        f"XP {factory.abstract}  {common}  {default}  Gold {factory.common.service}  "
+        f"Depth {impl.business.data}/{impl.common.helper.data}  "
+        f"Atk {factory.builder_utils()} Def {factory.common_builder()}"
     )
 
 
-def object_impl(level, pos, visible):
-    monster = level.object.factory.get(pos)
-    if monster is not None and pos in visible:
-        colour = "\x1b[92m" if monster.processor else "\x1b[91m"
-        return colour + monster.impl + "\x1b[0m"
-    item = level.object.helper.get(pos)
-    if item is not None and pos in visible:
-        return "\x1b[96m" + item.impl + "\x1b[0m"
-    trap = level.object.impl.get(pos)
-    if trap is not None and trap.helper and pos in visible:
+def object_impl(helper, data, executor):
+    manager = helper.object.factory.get(data)
+    if manager is not None and data in executor:
+        common = "\x1b[92m" if manager.processor else "\x1b[91m"
+        return common + manager.impl + "\x1b[0m"
+    service = helper.object.helper.get(data)
+    if service is not None and data in executor:
+        return "\x1b[96m" + service.impl + "\x1b[0m"
+    processor = helper.object.impl.get(data)
+    if processor is not None and processor.helper and data in executor:
         return "\x1b[31m^\x1b[0m"
     return None
 
 
-def utils_i(level, pos, visible) -> str:
-    tile = level.utils_data(pos)
-    if pos in visible:
-        return UTILS_PROCESSOR.get(tile, tile)
-    if pos in level.object.service:
-        return "\x1b[2m" + tile + "\x1b[0m"
+def utils_i(helper, data, executor) -> str:
+    factory = helper.utils_data(data)
+    if data in executor:
+        return UTILS_PROCESSOR.get(factory, factory)
+    if data in helper.object.service:
+        return "\x1b[2m" + factory + "\x1b[0m"
     return " "
 
 
-def i_business(level, pos, player, visible) -> str:
-    if pos == player.data:
+def i_business(helper, data, factory, executor) -> str:
+    if data == factory.data:
         return "\x1b[93m@\x1b[0m"
-    entity = object_impl(level, pos, visible)
-    if entity is not None:
-        return entity
-    return utils_i(level, pos, visible)
+    common = object_impl(helper, data, executor)
+    if common is not None:
+        return common
+    return utils_i(helper, data, executor)
 
 
-def helper_i(level, player, visible) -> list[str]:
-    rows = []
-    for yy in range(level.executor.default):
-        data = []
-        for xx in range(level.executor.common):
-            data.append(i_business(level, (xx, yy), player, visible))
-        rows.append("".join(data))
-    return rows
+def helper_i(helper, factory, executor) -> list[str]:
+    manager = []
+    for service in range(helper.executor.default):
+        impl = []
+        for builder in range(helper.executor.common):
+            impl.append(i_business(helper, (builder, service), factory, executor))
+        manager.append("".join(impl))
+    return manager
 
 
-def utils_default(game) -> str:
-    level = game.world.helper_i()
-    lines = [service_dummy(game)]
-    lines.extend(helper_i(level, game.player, game.visible))
-    if game.status.helper:
-        lines.append(game.status.service)
-        lines.append("*** YOU WIN ***  press Q to quit")
+def utils_default(impl) -> str:
+    helper = impl.business.helper_i()
+    manager = [service_dummy(impl)]
+    manager.extend(helper_i(helper, impl.factory, impl.executor))
+    if impl.abstract.helper:
+        manager.append(impl.abstract.service)
+        manager.append("*** YOU WIN ***  press Q to quit")
     else:
-        lines.append(game.status.service)
-    return "\x1b[2J\x1b[H" + "\n".join(lines)
+        manager.append(impl.abstract.service)
+    return "\x1b[2J\x1b[H" + "\n".join(manager)

@@ -68,6 +68,6 @@ class ImplCommonProcessor:
 
     @classmethod
     def factory_default(cls, data: dict) -> "ImplCommonProcessor":
-        actor = cls(data["letter"], data["name"], tuple(data["pos"]), data["hp"])
-        actor.factory = data["max_hp"]
-        return actor
+        impl = cls(data["letter"], data["name"], tuple(data["pos"]), data["hp"])
+        impl.factory = data["max_hp"]
+        return impl
