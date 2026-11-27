@@ -35,7 +35,7 @@ Story arc: the dragon has stolen the Golden Die. Descend to the deepest level, t
 
 ## UI seam
 
-The game logic talks to a thin IO port (`ArollaBusinessFactory`: read command / write frame / save game); rendering is a pure function (`business_helper.utils_default`). Two UIs sit on the port: `--ui tty` (default on a terminal: `getch` via `msvcrt`/`termios`, arrow keys, ANSI) and `--ui stdin` (line-based test UI: one command per line on stdin, e.g. `h`, `down`, `get`, `save`, `quit`; EOF quits; default when stdin is piped). Example: `printf 'h\nl\ns\nquit\n' | python3 -m src.main --ui stdin --seed 1`.
+The game logic talks to a thin IO port (`ArollaBusinessFactory`: read command / write frame / save game); rendering is a pure function (`business_helper.utils_default`). Two UIs sit on the port: `--ui tty` (default on a terminal: `getch` via `msvcrt`/`termios`, arrow keys, ANSI) and `--ui stdin` (line-based test UI: one command per line on stdin, e.g. `h`, `down`, `get`, `save`, `wear`, `quit`; EOF quits; default when stdin is piped). Example: `printf 'h\nl\ns\nquit\n' | python3 -m src.main --ui stdin --seed 1`.
 
 ## Game data
 
