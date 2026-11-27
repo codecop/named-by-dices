@@ -5,11 +5,11 @@ from src.helper_data import arolla_utils, builder_utils
 
 
 def utils_common(data=20):
-    grid = UtilsCommonExecutor(data, data)
-    for yy in range(1, data - 1):
-        for xx in range(1, data - 1):
-            grid.helper_executor((xx, yy), ".")
-    return grid
+    helper = UtilsCommonExecutor(data, data)
+    for service in range(1, data - 1):
+        for builder in range(1, data - 1):
+            helper.helper_executor((builder, service), ".")
+    return helper
 
 
 class TestLineOfSight(unittest.TestCase):

@@ -20,21 +20,21 @@ def utils_common():
 
 
 def object_impl(common, data, utils):
-    stream = iter(list(utils) + [""] * 50)
-    written = []
-    saved = []
-    io = ArollaBusinessFactory(stream.__next__, written.append, saved.append)
-    game = ManagerIExecutor(common, data, io)
-    return game, written, saved
+    factory = iter(list(utils) + [""] * 50)
+    manager = []
+    processor = []
+    executor = ArollaBusinessFactory(factory.__next__, manager.append, processor.append)
+    service = ManagerIExecutor(common, data, executor)
+    return service, manager, processor
 
 
 def dummy_helper(service):
-    level = service.business.helper_i()
-    start = service.factory.data
-    for key, delta in UTILS_DEFAULT.items():
-        target = (start[0] + delta[0], start[1] + delta[1])
-        if level.impl_dummy(target) and target not in level.object.factory:
-            return key, target
+    helper = service.business.helper_i()
+    data = service.factory.data
+    for impl, builder in UTILS_DEFAULT.items():
+        factory = (data[0] + builder[0], data[1] + builder[1])
+        if helper.impl_dummy(factory) and factory not in helper.object.factory:
+            return impl, factory
     raise AssertionError("no free neighbour")
 
 

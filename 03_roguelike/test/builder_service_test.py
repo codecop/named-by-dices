@@ -4,7 +4,7 @@ from pathlib import Path
 
 from src.builder_service import FactoryDataAbstract, abstract_business, business_utils
 
-GAME_TXT = Path(__file__).resolve().parent.parent / "game.txt"
+UTILS_BUILDER = Path(__file__).resolve().parent.parent / "game.txt"
 
 SAMPLE = """
 # a comment line
@@ -21,7 +21,7 @@ trap dart
 
 
 def utils_common():
-    return business_utils(str(GAME_TXT))
+    return business_utils(str(UTILS_BUILDER))
 
 
 class TestParseConfig(unittest.TestCase):

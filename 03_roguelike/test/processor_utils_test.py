@@ -18,9 +18,9 @@ def utils_common():
 
 
 def object_factory(helper, impl, data):
-    monster = AbstractBusinessFactory.builder_factory(utils_common(), impl, data)
-    helper.object.factory[data] = monster
-    return monster
+    manager = AbstractBusinessFactory.builder_factory(utils_common(), impl, data)
+    helper.object.factory[data] = manager
+    return manager
 
 
 class TestMonster(unittest.TestCase):
@@ -79,9 +79,9 @@ class TestChooseMove(unittest.TestCase):
     def utils_abstract(self):
         helper = ManagerBusinessArolla(10, 10, 1)
         helper.manager.append(ArollaImplData(1, 1, 8, 8))
-        for yy in range(1, 9):
-            for xx in range(1, 9):
-                helper.helper_executor((xx, yy), ".")
+        for service in range(1, 9):
+            for builder in range(1, 9):
+                helper.helper_executor((builder, service), ".")
         return helper
 
     def test_seen_target_is_chased(self):

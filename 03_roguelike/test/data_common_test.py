@@ -22,15 +22,15 @@ def utils_common():
 
 
 def processor_service(helper, data):
-    seen = {data}
-    queue = [data]
-    while queue:
-        cell = queue.pop()
-        for neighbour in builder_default(cell):
-            if neighbour not in seen and helper.impl_dummy(neighbour):
-                seen.add(neighbour)
-                queue.append(neighbour)
-    return seen
+    factory = {data}
+    manager = [data]
+    while manager:
+        impl = manager.pop()
+        for service in builder_default(impl):
+            if service not in factory and helper.impl_dummy(service):
+                factory.add(service)
+                manager.append(service)
+    return factory
 
 
 class TestRoom(unittest.TestCase):

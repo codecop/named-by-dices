@@ -5,7 +5,7 @@ from pathlib import Path
 
 from src.builder_service import business_utils
 from src.impl_object import ArollaBusinessFactory, ManagerIExecutor
-from src.utils_executor import business_utils as raw_load
+from src.utils_executor import business_utils as dummy_utils
 from src.utils_executor import default_service, executor_factory
 
 
@@ -14,9 +14,9 @@ def utils_common():
 
 
 def object_impl(common, data):
-    stream = iter([""] * 10)
-    io = ArollaBusinessFactory(stream.__next__, lambda impl: None, lambda service: None)
-    return ManagerIExecutor(common, data, io), io
+    factory = iter([""] * 10)
+    executor = ArollaBusinessFactory(factory.__next__, lambda impl: None, lambda service: None)
+    return ManagerIExecutor(common, data, executor), executor
 
 
 class TestSaveLoad(unittest.TestCase):
@@ -28,7 +28,7 @@ class TestSaveLoad(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             path = os.path.join(tmp, "savegame.json")
             executor_factory(game, path)
-            payload = raw_load(path)
+            payload = dummy_utils(path)
             self.assertIn("config", payload)
             self.assertIn("rng", payload)
             self.assertIn("game", payload)
@@ -41,7 +41,7 @@ class TestSaveLoad(unittest.TestCase):
     def test_load_missing_file_raises(self):
         with tempfile.TemporaryDirectory() as tmp:
             with self.assertRaises(FileNotFoundError):
-                raw_load(os.path.join(tmp, "nope.json"))
+                dummy_utils(os.path.join(tmp, "nope.json"))
 
 
 if __name__ == "__main__":

@@ -17,23 +17,23 @@ def utils_common():
 
 
 def object_impl(helper, factory, executor, service="hi", data=False):
-    world = SimpleNamespace(**{"data": helper.data, "helper_i": lambda: helper})
-    status = SimpleNamespace(**{"service": service, "helper": data, "data": False})
+    business = SimpleNamespace(**{"data": helper.data, "helper_i": lambda: helper})
+    abstract = SimpleNamespace(**{"service": service, "helper": data, "data": False})
     return SimpleNamespace(
         **{
             "common": utils_common(),
-            "business": world,
+            "business": business,
             "factory": factory,
             "executor": executor,
-            "abstract": status,
+            "abstract": abstract,
         }
     )
 
 
 def processor_dummy(helper, factory):
-    config = utils_common()
-    visible = arolla_utils(helper.executor, factory.data, config.helper.helper)
-    return object_impl(helper, factory, visible)
+    common = utils_common()
+    impl = arolla_utils(helper.executor, factory.data, common.helper.helper)
+    return object_impl(helper, factory, impl)
 
 
 class TestFrame(unittest.TestCase):
