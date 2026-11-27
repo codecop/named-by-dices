@@ -3,12 +3,8 @@ py-version = 3.13
 fail-under = 10.0
 jobs = 0
 
-[MESSAGES CONTROL]
-disable = duplicate-code
-
 [FORMAT]
 max-line-length = 100
-max-module-lines = 500
 
 [SIMILARITIES]
 min-similarity-lines = 12
