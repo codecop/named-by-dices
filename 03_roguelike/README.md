@@ -46,7 +46,7 @@ Everything about the world is configurable in [game.txt](game.txt): map size, de
 ```
 src/        game code (config, dungeon generation, items, player, monsters, combat, fov, renderer, input, save/load, game engine, entry point)
 test/       plain unittest suite, next to src
-docs/       coverage documents only (coverage.md, coverage-report/)
+docs/       documents: coverage (coverage.md, coverage-report/), player test plan (test_plan.md) and demo video (demo.gif, frame-*.png)
 game.txt    configurable game data
 test.sh     run the unit tests (used by the CI action)
 run.sh      run the game (CI smoke-runs it via `--ui stdin`)
