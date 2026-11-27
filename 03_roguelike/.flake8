@@ -1,0 +1,5 @@
+[flake8]
+max-line-length = 100
+max-complexity = 10
+select = E,W,F,C90
+exclude = .git,__pycache__,docs/coverage-report,.venv,build,dist
