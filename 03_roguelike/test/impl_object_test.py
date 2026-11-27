@@ -60,6 +60,14 @@ class TestNewGame(unittest.TestCase):
         self.assertIn("artefact", kinds)
         self.assertTrue(any(m.impl == "D" for m in level.object.factory.values()))
 
+    def test_shallow_levels_have_no_artefact(self):
+        config = utils_common()
+        for depth in range(1, config.helper.data):
+            level = data_service(config, random.Random(3), depth)
+            default_service(config, level, random.Random(4), depth)
+            kinds = [item.data for item in level.object.helper.values()]
+            self.assertNotIn("artefact", kinds)
+
 
 class TestMovement(unittest.TestCase):
     def setUp(self):

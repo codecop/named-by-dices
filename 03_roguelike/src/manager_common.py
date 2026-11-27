@@ -37,6 +37,8 @@ def executor_factory(
 ) -> ObjectDummyService:
     dummy = []
     for service in common.object:
+        if service == "artefact":
+            continue
         dummy.extend([service] * (2 if service in ("potion", "gold") else 1))
     service = builder.choice(dummy)
     helper, impl, utils = builder.choice(common.object[service])

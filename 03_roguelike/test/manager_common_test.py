@@ -60,6 +60,13 @@ class TestRandomItem(unittest.TestCase):
                 self.assertEqual(item.factory, item.helper)
                 self.assertGreater(item.factory, 0)
 
+    def test_random_items_never_include_the_artefact(self):
+        config = utils_common()
+        rng = random.Random(13)
+        for _ in range(200):
+            item = executor_factory(config, rng, 1)
+            self.assertNotEqual(item.data, "artefact")
+
     def test_same_seed_generates_the_same_item(self):
         config = utils_common()
         first = executor_factory(config, random.Random(9), 2)
