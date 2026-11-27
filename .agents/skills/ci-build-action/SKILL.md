@@ -65,3 +65,5 @@ jobs:
 ## Gotchas (language agnostic)
 
 * Validate the file (`python3 -c "import yaml; yaml.safe_load(open(...))"`) and watch the run: `gh run list --repo <owner>/<repo> --branch <branch>` and `gh run view <id> --log-failed`.
+* If the task folder has its own build scripts (e.g. `test.sh` / `run.sh`), the `Test` step calls the script (`run: ./test.sh`) instead of inlining the command, so CI and local runs use the same entry point. A `Smoke` step can drive the run script non-interactively, e.g. `run: printf 'quit\n' | ./run.sh --ui stdin`.
+* Do not add a `Coverage` step or a report artifact upload unless the task asks for it. Project decision (see `03_roguelike`): coverage is measured locally (`coverage run -m unittest ...`, `coverage html -d docs/coverage-report`), the report is committed to the task-local `docs/` folder, and CI runs lint and tests only - so do not `pip install coverage` in the CI job either.

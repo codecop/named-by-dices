@@ -6,10 +6,11 @@ Console roguelike in plain Python (3.13) with an ANSI terminal UI. See [requirem
 
 No third-party runtime dependencies; lint and coverage use pip packages only (`pip install pylint flake8 coverage`).
 
-[run.sh](run.sh) has one line for the tests and one line for the game:
+Two build scripts: [test.sh](test.sh) runs the tests, [run.sh](run.sh) runs the game (the CI action calls both):
 
 ```
-./run.sh
+./test.sh
+./run.sh [--seed N] [--data game.txt] [--save savegame.json] [--ui tty|stdin]
 ```
 
 or directly:
@@ -25,7 +26,7 @@ Coverage (100%, branch coverage): `coverage run -m unittest discover -s test -t 
 ## Run
 
 ```
-python3 -m src.main [--seed N]
+./run.sh [--seed N]
 ```
 
 Keys: `[H][J][K][L]` or arrow keys (plus `y/u/b/n` diagonals) move and attack, `[.]` rest, `[>]` descend, `[<]` ascend, `[,]` pick up, `[I]` inventory, `[W]` wield weapon, `[Shift-W]` wear armour, `[Q]` quaff potion, `[R]` read scroll, `[Z]` zap wand, `[S]` save game, `[Shift-Q]` quit, `[?]` help.
@@ -47,7 +48,8 @@ src/        game code (config, dungeon generation, items, player, monsters, comb
 test/       plain unittest suite, next to src
 docs/       coverage documents only (coverage.md, coverage-report/)
 game.txt    configurable game data
-run.sh      one line for the tests, one line for the game
+test.sh     run the unit tests (used by the CI action)
+run.sh      run the game (CI smoke-runs it via `--ui stdin`)
 ```
 
 ## Naming
