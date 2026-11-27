@@ -12,6 +12,11 @@ PROCESSOR_ABSTRACT = {
     "get": ",",
     "inventory": "i",
     "look": "i",
+    "wield": "w",
+    "wear": "W",
+    "quaff": "q",
+    "read": "r",
+    "zap": "z",
 }
 
 

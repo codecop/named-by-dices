@@ -393,6 +393,20 @@ class TestFlow(unittest.TestCase):
         self.assertGreaterEqual(len(written), 2)
         self.assertTrue(written[0].startswith("\x1b[2J\x1b[H"))
 
+    def test_final_frame_is_rendered_after_game_over(self):
+        game, written, _ = object_impl(self.common, 7, ["Q"])
+        game.arolla_service()
+        self.assertEqual(len(written), 2)
+        self.assertTrue(written[-1].startswith("\x1b[2J\x1b[H"))
+
+    def test_game_over_state_renders_the_message_frame(self):
+        game, written, _ = object_impl(self.common, 7, [""])
+        game.abstract.data = True
+        game.abstract.service = impl_common("death")
+        game.arolla_service()
+        self.assertEqual(len(written), 1)
+        self.assertIn("Game over", written[0])
+
     def test_to_dict_and_from_dict_round_trip(self):
         config = utils_common()
         game, _, _ = object_impl(config, 7, [])

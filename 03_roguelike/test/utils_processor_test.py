@@ -20,6 +20,11 @@ class TestExecutorI(unittest.TestCase):
         self.assertEqual(executor_i("rest\n"), ".")
         self.assertEqual(executor_i("get\n"), ",")
         self.assertEqual(executor_i("look\n"), "i")
+        self.assertEqual(executor_i("wield\n"), "w")
+        self.assertEqual(executor_i("WEAR\n"), "W")
+        self.assertEqual(executor_i("quaff\n"), "q")
+        self.assertEqual(executor_i("read\n"), "r")
+        self.assertEqual(executor_i("zap\n"), "z")
 
     def test_empty_line_and_eof_map_to_empty_command(self):
         self.assertEqual(executor_i(""), "")

@@ -72,7 +72,7 @@ def utils_default(impl) -> str:
     manager.extend(helper_i(helper, impl.factory, impl.executor))
     if impl.abstract.helper:
         manager.append(impl.abstract.service)
-        manager.append("*** YOU WIN ***  press Q to quit")
+        manager.append("*** YOU WIN ***")
     else:
         manager.append(impl.abstract.service)
     return "\x1b[2J\x1b[H" + "\n".join(manager)

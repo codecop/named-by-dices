@@ -132,6 +132,7 @@ class ManagerIExecutor:
         while not self.abstract.data:
             self.utils.i_object(utils_default(self))
             self.helper_executor(self.utils.i_impl())
+        self.utils.i_object(utils_default(self))
 
     def helper_executor(self, data: str) -> None:
         processor = True
