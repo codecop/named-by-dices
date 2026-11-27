@@ -101,3 +101,12 @@ All fixed with regression tests (100% coverage kept):
 - Naming AST scan as a CI gate (needs a small script in the repo).
 - "Ran 0 tests" guard inside `test.sh` (CI-only vs. script).
 - Process rule for conflicts between a skill file and a direct user instruction.
+
+## 7. Up-front process rules (per error, discussed one by one)
+
+Rule of thumb: the prevention belongs into the scaffolding (run.sh, CI, conventions) *before the
+first commit*, so the error class can never occur silently.
+
+- **A1 silent zero-test run** -> from day one, a test run is only green if it ran tests:
+  `test.sh`/CI fails on `Ran 0 tests`; the convention "test methods start with `test_`" is enforced
+  by that guard.
