@@ -16,7 +16,7 @@ or directly:
 
 ```
 python3 -m unittest discover -s test -t . -p '*_test.py'
-python3 -m src.main [--seed N] [--data game.txt] [--save savegame.json]
+python3 -m src.main [--seed N] [--data game.txt] [--save savegame.json] [--ui tty|stdin]
 ```
 
 Lint (strict): `flake8 src test` and `PYTHONPATH=. pylint src test` (10.00/10).
@@ -31,6 +31,10 @@ python3 -m src.main [--seed N]
 Keys: `[H][J][K][L]` or arrow keys (plus `y/u/b/n` diagonals) move and attack, `[.]` rest, `[>]` descend, `[<]` ascend, `[,]` pick up, `[I]` inventory, `[W]` wield weapon, `[Shift-W]` wear armour, `[Q]` quaff potion, `[R]` read scroll, `[Z]` zap wand, `[S]` save game, `[Shift-Q]` quit, `[?]` help.
 
 Story arc: the dragon has stolen the Golden Die. Descend to the deepest level, take the artefact from the dragon's hall and escape via the up stairs on depth 1. If a saved game exists, the start menu offers to load it.
+
+## UI seam
+
+The game logic talks to a thin IO port (`ArollaBusinessFactory`: read command / write frame / save game); rendering is a pure function (`business_helper.utils_default`). Two UIs sit on the port: `--ui tty` (default on a terminal: `getch` via `msvcrt`/`termios`, arrow keys, ANSI) and `--ui stdin` (line-based test UI: one command per line on stdin, e.g. `h`, `down`, `get`, `save`, `quit`; EOF quits; default when stdin is piped). Example: `printf 'h\nl\ns\nquit\n' | python3 -m src.main --ui stdin --seed 1`.
 
 ## Game data
 

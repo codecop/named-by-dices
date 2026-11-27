@@ -78,6 +78,7 @@ With
 
 * full code coverage with unit tests kept in task local `docs` folder.
 * pylint & flake8 with struct rule set
+* thin IO seam between UI and logic: the game is driven through an injected port (read command / write frame / save game); besides the ANSI terminal UI there is a line-based stdin test UI (`--ui stdin`, one command per line: `h`, `down`, `get`, `save`, `quit`)
 * github ci action
 
 MUST FOLLOW `naming` skill convention for all names.

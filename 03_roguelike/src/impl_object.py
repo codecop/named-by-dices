@@ -5,7 +5,6 @@ from src.builder_service import FactoryDataAbstract
 from src.business_helper import utils_default
 from src.data_common import ManagerBusinessArolla, data_service
 from src.executor_service import arolla_service
-from src.factory_object import object_service
 from src.helper_data import arolla_utils
 from src.manager_common import executor_factory, factory_arolla, object_arolla
 from src.processor_utils import (
@@ -132,8 +131,7 @@ class ManagerIExecutor:
     def arolla_service(self) -> None:
         while not self.abstract.data:
             self.utils.i_object(utils_default(self))
-            default = object_service(self.utils.i_impl)
-            self.helper_executor(default)
+            self.helper_executor(self.utils.i_impl())
 
     def helper_executor(self, data: str) -> None:
         processor = True

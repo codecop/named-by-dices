@@ -4,7 +4,7 @@ import unittest
 from pathlib import Path
 from unittest import mock
 
-from src import factory_object, main
+from src import main, utils_processor
 
 UTILS_BUILDER = Path(__file__).resolve().parent.parent / "game.txt"
 
@@ -12,33 +12,63 @@ UTILS_BUILDER = Path(__file__).resolve().parent.parent / "game.txt"
 def object_impl(factory):
     helper = mock.Mock()
     helper.isatty.return_value = False
-    helper.read.side_effect = list(factory) + [""] * 50
+    helper.readline.side_effect = [key + "\n" for key in factory] + [""]
     return helper
 
 
 class TestMain(unittest.TestCase):
-    def executor_dummy(self, utils, data):
+    def executor_dummy(self, utils, data, ui=None):
         manager = []
         helper = object_impl(utils)
+        argv = ["--seed", "7", "--data", str(UTILS_BUILDER), "--save", data]
+        if ui is not None:
+            argv += ["--ui", ui]
         with (
-            mock.patch.object(factory_object, "sys") as factory,
-            mock.patch.object(main, "sys") as service,
+            mock.patch.object(utils_processor, "sys") as processor_sys,
+            mock.patch.object(main, "sys") as main_sys,
         ):
-            factory.stdin = helper
-            service.stdout = mock.Mock()
-            impl = main.main(
-                ["--seed", "7", "--data", str(UTILS_BUILDER), "--save", data],
-                utils=manager.append,
-            )
+            processor_sys.stdin = helper
+            main_sys.stdin = helper
+            main_sys.stdout = mock.Mock()
+            impl = main.main(argv, utils=manager.append)
         return impl, manager
 
     def test_main_runs_a_piped_game_and_quits_on_eof(self):
         with tempfile.TemporaryDirectory() as tmp:
-            impl, manager = self.executor_dummy(["h", "l", "Q"], os.path.join(tmp, "save.json"))
+            impl, manager = self.executor_dummy(
+                ["h", "l", "Q"], os.path.join(tmp, "save.json")
+            )
         self.assertEqual(impl, 0)
         self.assertTrue(manager)
         self.assertTrue(manager[0].startswith("\x1b[2J\x1b[H"))
         self.assertIn("HP", manager[0])
+
+    def test_main_with_explicit_stdin_ui(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            impl, manager = self.executor_dummy(
+                ["down", "quit"], os.path.join(tmp, "s.json"), ui="stdin"
+            )
+        self.assertEqual(impl, 0)
+        self.assertIn("Depth 1/5", manager[0])
+        self.assertTrue(any("No stairs down here." in frame for frame in manager))
+
+    def test_main_with_tty_ui_uses_getch(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            save = os.path.join(tmp, "s.json")
+            getch = mock.Mock(side_effect=["h", "Q", ""])
+            manager = []
+            with (
+                mock.patch.object(main, "executor_impl", return_value=getch),
+                mock.patch.object(main, "sys") as main_sys,
+            ):
+                main_sys.stdout = mock.Mock()
+                impl = main.main(
+                    ["--ui", "tty", "--seed", "7", "--data", str(UTILS_BUILDER), "--save", save],
+                    utils=manager.append,
+                )
+            self.assertEqual(impl, 0)
+            self.assertTrue(manager)
+            self.assertTrue(manager[0].startswith("\x1b[2J\x1b[H"))
 
     def test_main_saves_and_offers_load_on_next_start(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -67,11 +97,12 @@ class TestMain(unittest.TestCase):
         helper = object_impl(["Q"])
         with (
             tempfile.TemporaryDirectory() as tmp,
-            mock.patch.object(factory_object, "sys") as factory_sys,
+            mock.patch.object(utils_processor, "sys") as processor_sys,
             mock.patch.object(main, "sys") as main_sys,
             mock.patch("builtins.print") as print_mock,
         ):
-            factory_sys.stdin = helper
+            processor_sys.stdin = helper
+            main_sys.stdin = helper
             main_sys.stdout = mock.Mock()
             impl = main.main(
                 ["--data", str(UTILS_BUILDER), "--save", os.path.join(tmp, "s.json")]
