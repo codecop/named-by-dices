@@ -76,8 +76,12 @@ With
   getch = _GetchWindows()
   ```
 
-* full code coverage with unit tests kept in task local `docs` folder.
-* pylint & flake8 with struct rule set
+* full code coverage with unit tests kept in task local `docs` folder; coverage is measured locally and the report committed to `docs/` — CI runs lint and tests only, no coverage step.
+* pylint & flake8 with struct rule set; never loosen linter limits — decompose into more classes instead; no doc comments (disable the docstring rules in the linter config instead).
+* unit tests in a separate top-level `test/` folder next to `src/`.
+* no Makefile: provide a `test.sh` and a `run.sh` in the task folder (one command each), and the CI action calls these scripts instead of inlining commands.
+* work incrementally: after every change all tests and linters are green; a test run that ran 0 tests is a failure.
+* test kinds beyond plain unit tests with mocks: property-based tests for generation invariants (all seeds/depths), edge configs (missing sections), game-loop x renderer integration, UI parity/odd-input tests through the IO seam.
 * thin IO seam between UI and logic: the game is driven through an injected port (read command / write frame / save game); besides the ANSI terminal UI there is a line-based stdin test UI (`--ui stdin`, one command per line: `h`, `down`, `get`, `save`, `wear`, `quit`)
 * github ci action
 

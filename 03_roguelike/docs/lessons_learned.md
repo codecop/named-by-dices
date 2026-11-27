@@ -126,3 +126,10 @@ first commit*, so the error class can never occur silently.
     what the frame actually shows);
   - UI: **parity and odd-input edge tests through the real seam** (every tty command reachable
     via stdin words; empty/EOF/uppercase/long input).
+- **C/D rework and inconsistencies** -> record the non-negotiables up front in
+  `requirements.md` (language-agnostic ones, e.g. scripts instead of Makefile, top-level `test/`,
+  strict linters without loosening, no docstrings, CI calls the task scripts, incremental green
+  runs, test-kind rules) *before* the first commit; project-specific constraints go into this
+  document. When instructions contradict each other or are ambiguous, ask one short clarifying
+  question immediately instead of implementing the first reading; when a skill file conflicts with
+  a direct user instruction, the user wins and the conflict is noted explicitly.
