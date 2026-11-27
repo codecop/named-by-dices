@@ -2,7 +2,7 @@ import random
 import unittest
 from pathlib import Path
 
-from src.builder_service import business_utils
+from src.builder_service import abstract_business, business_utils
 from src.data_common import ArollaImplData, ManagerBusinessArolla, data_service
 from src.processor_utils import (
     AbstractBusinessFactory,
@@ -24,6 +24,12 @@ def object_factory(helper, impl, data):
 
 
 class TestMonster(unittest.TestCase):
+    def test_no_monsters_in_config_spawns_none(self):
+        config = abstract_business("setting width 40\nsetting height 14\n")
+        level = data_service(config, random.Random(3), 1)
+        processor_service(config, level, random.Random(4), 1)
+        self.assertFalse(level.object.factory)
+
     def test_factory_builds_stats_from_the_config(self):
         monster = AbstractBusinessFactory.builder_factory(utils_common(), "r", (1, 1))
         self.assertEqual(monster.impl, "r")

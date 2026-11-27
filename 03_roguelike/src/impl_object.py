@@ -406,21 +406,22 @@ def default_service(
     processor_service(common, helper, builder, data)
     helper_builder(common, helper, builder)
     manager = builder.randint(3, 6)
-    for dummy in range(manager):
-        factory = helper.business_arolla(builder)
-        helper.object.helper[factory] = executor_factory(common, builder, data)
+    if common.object:
+        for dummy in range(manager):
+            factory = helper.business_arolla(builder)
+            helper.object.helper[factory] = executor_factory(common, builder, data)
     if data == common.helper.data:
         service = helper.manager[-1]
-        impl = service.processor_factory(builder)
-        helper.object.helper[impl] = object_arolla(common)
-        abstract = max(
-            (impl for impl in common.manager if impl not in common.service),
-            key=lambda impl: common.manager[impl][5],
-        )
-        executor = service.processor_factory(builder)
-        helper.object.factory[executor] = AbstractBusinessFactory.builder_factory(
-            common, abstract, executor
-        )
+        if "artefact" in common.object:
+            impl = service.processor_factory(builder)
+            helper.object.helper[impl] = object_arolla(common)
+        dummy = [impl for impl in common.manager if impl not in common.service]
+        if dummy:
+            abstract = max(dummy, key=lambda impl: common.manager[impl][5])
+            executor = service.processor_factory(builder)
+            helper.object.factory[executor] = AbstractBusinessFactory.builder_factory(
+                common, abstract, executor
+            )
 
 
 def service_arolla(service, processor) -> None:

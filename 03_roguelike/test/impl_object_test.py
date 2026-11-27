@@ -68,6 +68,15 @@ class TestNewGame(unittest.TestCase):
             kinds = [item.data for item in level.object.helper.values()]
             self.assertNotIn("artefact", kinds)
 
+    def test_deepest_level_without_artefact_or_monsters_in_config(self):
+        config = abstract_business(
+            "setting width 40\nsetting height 14\nsetting max_depth 1\n"
+        )
+        level = data_service(config, random.Random(3), 1)
+        default_service(config, level, random.Random(4), 1)
+        self.assertFalse(level.object.factory)
+        self.assertFalse(level.object.helper)
+
 
 class TestMovement(unittest.TestCase):
     def setUp(self):

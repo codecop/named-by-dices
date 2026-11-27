@@ -62,6 +62,8 @@ def processor_service(
         for impl, arolla in common.manager.items()
         if arolla[5] <= data and impl not in common.service
     ]
+    if not dummy:
+        return
     service = 0
     utils = 0
     while service < processor and utils < 300:
