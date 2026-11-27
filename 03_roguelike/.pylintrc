@@ -1,0 +1,16 @@
+[MAIN]
+py-version = 3.13
+fail-under = 10.0
+jobs = 0
+
+[MESSAGES CONTROL]
+disable = missing-module-docstring,missing-class-docstring,missing-function-docstring
+
+[BASIC]
+good-names = PROCESSOR_I
+
+[FORMAT]
+max-line-length = 100
+
+[SIMILARITIES]
+min-similarity-lines = 12

@@ -1,0 +1,44 @@
+# 03_roguelike game data: one entry per line, '#' starts a comment.
+# setting <key> <value>   keys: width height max_depth fov_radius min_rooms max_rooms start_hp
+# monster <letter> <name> <hp> <attack> <defence> <xp> <min depth>
+# npc     <letter> <name> <hp>            friendly helper, never attacks
+# item    <kind> <letter> <name> <power>  kinds: weapon armour potion scroll wand gold artefact
+# trap    <kind>
+
+setting width 78
+setting height 22
+setting max_depth 5
+setting fov_radius 8
+setting min_rooms 10
+setting max_rooms 14
+setting start_hp 12
+
+monster r rat 3 2 0 2 1
+monster k kobold 5 3 0 4 1
+monster g goblin 7 4 1 6 1
+monster o orc 10 6 1 10 2
+monster s skeleton 8 5 2 8 2
+monster T troll 16 8 2 20 3
+monster D dragon 30 10 3 100 5
+
+npc H hermit 12
+
+item weapon ) dagger 1
+item weapon ) short sword 2
+item weapon ) battle axe 3
+item weapon ) magic blade 5
+item armour [ leather armour 1
+item armour [ chain mail 2
+item potion ! healing potion 6
+item potion ! greater healing potion 12
+item potion ! poison -4
+item scroll ? scroll of magic mapping 0
+item scroll ? scroll of teleportation 0
+item scroll ? scroll of fireball 8
+item wand / wand of magic missile 5
+item gold $ pile of gold 0
+item artefact & the Golden Die 0
+
+trap dart
+trap teleport
+trap alarm
